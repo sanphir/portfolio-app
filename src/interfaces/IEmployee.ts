@@ -8,3 +8,12 @@ export interface IEmployee {
     CreatedDate: any;
     LastModifiedDate: any;
 }
+
+export interface INewEmployee {    
+    Name: string;
+    Email: string;
+    Role: string;
+    BirthDate: any;
+    Salary: number;
+    Password: string;    
+}

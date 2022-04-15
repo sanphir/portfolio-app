@@ -5,7 +5,7 @@ import AuthService from "./AuthService";
 const API_URL = "https://localhost:7039/";
 
 export class EmployeeService {
-    getEmployeesList(): any[] {
+    getEmployees(): any[] {
         const fakeEmployees = [
             {
                 Id: "829811CF-4E79-4A15-854F-EE344AD21B35",

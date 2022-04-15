@@ -40,9 +40,14 @@ export const Navbar = () => {
                         </Button>
                     )}
                     {isAuth && (
+                        <div>
+                        <Button color="inherit" onClick={()=>   navigate('employees')}>
+                            Employees
+                        </Button>
                         <Button color="inherit" onClick={logout}>
                             Logout
                         </Button>
+                        </div>
                     )}
                 </Toolbar>
             </AppBar>
