@@ -18,46 +18,46 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
     {
-        id: 'Name',
+        id: 'name',
         numeric: false,
         disablePadding: true,
-        label: 'Name',
+        label: 'name',
     },
     {
-        id: 'Email',
+        id: 'email',
         numeric: false,
         disablePadding: false,
-        label: 'Email',
+        label: 'email',
     },
     {
-        id: 'Role',
+        id: 'role',
         numeric: false,
         disablePadding: false,
-        label: 'Role',
+        label: 'role',
     },
     {
-        id: 'BirthDate',
+        id: 'birthDate',
         numeric: false,
         disablePadding: false,
-        label: 'BirthDate',
+        label: 'birthDate',
     },
     {
-        id: 'Salary',
+        id: 'salary',
         numeric: true,
         disablePadding: false,
-        label: 'Salary',
+        label: 'salary',
     },
     {
-        id: 'CreatedDate',
+        id: 'createdDate',
         numeric: false,
         disablePadding: false,
-        label: 'CreatedDate',
+        label: 'createdDate',
     },
     {
-        id: 'LastModifiedDate',
+        id: 'lastModifiedDate',
         numeric: false,
         disablePadding: false,
-        label: 'LastModifiedDate',
+        label: 'lastModifiedDate',
     },
 ];
 

@@ -1,58 +1,36 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import { ICommonResponse } from "../interfaces/ICommonResponse";
 import { IEmployee } from "../interfaces/IEmployee";
 import AuthService from "./AuthService";
 
 const API_URL = "https://localhost:7039/";
 
 export class EmployeeService {
-    getEmployees(): any[] {
-        const fakeEmployees = [
-            {
-                Id: "829811CF-4E79-4A15-854F-EE344AD21B35",
-                Name: "admin",
-                Email: "admin@mail.com",
-                Role: "admin",
-                BirthDate: "2022222",
-                Salary: "0",
-                CreatedDate: "",
-                LastModifiedDate: "",
-            }, 
-            {
-                Id: "56E4750F-0E98-479C-8ED4-30FE585F90A4",
-                Name: "user1",
-                Email: "user1@mail.com",
-                Role: "user",
-                BirthDate: "2022222",
-                Salary: "0",
-                CreatedDate: "",
-                LastModifiedDate: "",
-            },
-            {
-                Id: "6F6CBEEC-B9B1-4521-88D1-F4F720ADEE34",
-                Name: "user2",
-                Email: "user2@mail.com",
-                Role: "user",
-                BirthDate: "2022222",
-                Salary: "0",
-                CreatedDate: "",
-                LastModifiedDate: "",
-            },
-            {
-                Id: "9AD1BE21-5EDE-410D-AC06-416735843741",
-                Name: "user3",
-                Email: "user3@mail.com",
-                Role: "user",
-                BirthDate: "2022222",
-                Salary: "0",
-                CreatedDate: "",
-                LastModifiedDate: "",
-            },
-        ];
+    async getEmployees(): Promise<ICommonResponse<IEmployee[]>> {
+        console.log("invoke getEmployees")
 
+        try {
+            const response = await axios.get(API_URL + "api/Employee/list", { headers: AuthService.authHeader() });
+            //console.log(Date.now()+': We get Employees: '+response.data);
 
-      return fakeEmployees;
-      //return axios.get(API_URL + "api/Employee/list", {  headers:  AuthService.authHeader() });
+            return {
+                data: response.data as IEmployee[],
+                error: null,
+            };
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                return {
+                    data: null,
+                    error: (<AxiosError>error).response?.data?.errorText ?? "Something went wrong!",
+                };
+            } else {
+                return {
+                    data: null,
+                    error: (<Error>error).message,
+                };
+            }
+        }
     }
-  }
+}
 
 export default new EmployeeService();

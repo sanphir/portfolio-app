@@ -14,17 +14,17 @@ export const Login = () => {
     const [loginError, setLoginError] = useState(false);
 
     const login = async () => {
-
+                
         const loginResponse = await AuthService.login(
             loginFieldRef.current?.value ?? "",
             pwdFieldRef.current?.value ?? ""
         );
-        if (loginResponse.tokenResponse != null) {
-            console.log(loginResponse.tokenResponse);
-            console.log("accessToken=" + loginResponse.tokenResponse.accessToken);
-            console.log("userName=" + loginResponse.tokenResponse.userName);
-            console.log("validTo=" + loginResponse.tokenResponse.validTo);
-            console.log("role=" + loginResponse.tokenResponse.role);
+        if (loginResponse.data != null) {
+            console.log(loginResponse.data);
+            console.log("accessToken=" + loginResponse.data.accessToken);
+            console.log("userName=" + loginResponse.data.userName);
+            console.log("validTo=" + loginResponse.data.validTo);
+            console.log("role=" + loginResponse.data.role);
             setLoginError(false);
 
             navigate("/employees", { replace: true });

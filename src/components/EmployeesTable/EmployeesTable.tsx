@@ -42,14 +42,14 @@ function getComparator<Key extends keyof any>(
 function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
     const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
     stabilizedThis.sort((a, b) => {
-      const order = comparator(a[0], b[0]);
-      if (order !== 0) {
-        return order;
-      }
-      return a[1] - b[1];
+        const order = comparator(a[0], b[0]);
+        if (order !== 0) {
+            return order;
+        }
+        return a[1] - b[1];
     });
     return stabilizedThis.map((el) => el[0]);
-  }
+}
 
 interface EmployeesTableProps {
     rows: IEmployee[];
@@ -59,11 +59,11 @@ export default function EmployeesTable(props: EmployeesTableProps) {
     const { rows } = props;
 
     const [order, setOrder] = React.useState<Order>('asc');
-    const [orderBy, setOrderBy] = React.useState<keyof IEmployee>('Name');
+    const [orderBy, setOrderBy] = React.useState<keyof IEmployee>('name');
     const [selected, setSelected] = React.useState<readonly string[]>([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
@@ -76,7 +76,7 @@ export default function EmployeesTable(props: EmployeesTableProps) {
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
-            const newSelecteds = rows.map((n) => n.Name);
+            const newSelecteds = rows.map((n) => n.name);
             setSelected(newSelecteds);
             return;
         }
@@ -116,7 +116,7 @@ export default function EmployeesTable(props: EmployeesTableProps) {
         setDense(event.target.checked);
     };
 
-    const isSelected = (name: string ) => selected.indexOf(name) !== -1;
+    const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
@@ -146,17 +146,18 @@ export default function EmployeesTable(props: EmployeesTableProps) {
                             {stableSort(rows, getComparator(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
-                                    const isItemSelected = isSelected(row.Name.toString());
+                                    //console.log('row'+index+': '+JSON.stringify(row));
+                                    const isItemSelected = isSelected(row.name.toString());
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
                                     return (
                                         <TableRow
                                             hover
-                                            onClick={(event) => handleClick(event, row.Name.toString())}
+                                            onClick={(event) => handleClick(event, row.name.toString())}
                                             role="checkbox"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
-                                            key={row.Name}
+                                            key={row.name}
                                             selected={isItemSelected}
                                         >
                                             <TableCell padding="checkbox">
@@ -174,14 +175,14 @@ export default function EmployeesTable(props: EmployeesTableProps) {
                                                 scope="row"
                                                 padding="none"
                                             >
-                                                {row.Name}
+                                                {row.name}
                                             </TableCell>
-                                            <TableCell align="right">{row.Name}</TableCell>
-                                            <TableCell align="right">{row.Email}</TableCell>
-                                            <TableCell align="right">{row.Role}</TableCell>
-                                            <TableCell align="right">{row.BirthDate}</TableCell>
-                                            <TableCell align="right">{row.CreatedDate}</TableCell>
-                                            <TableCell align="right">{row.LastModifiedDate}</TableCell>
+                                            <TableCell align="left">{row.email}</TableCell>
+                                            <TableCell align="left">{row.role}</TableCell>
+                                            <TableCell align="left">{row.birthDate}</TableCell>
+                                            <TableCell align="right">{row.salary}</TableCell>
+                                            <TableCell align="left">{row.createdDate}</TableCell>
+                                            <TableCell align="left">{row.lastModifiedDate}</TableCell>
                                         </TableRow>
                                     );
                                 })}
@@ -198,7 +199,7 @@ export default function EmployeesTable(props: EmployeesTableProps) {
                     </Table>
                 </TableContainer>
                 <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
+                    rowsPerPageOptions={[10, 15, 20]}
                     component="div"
                     count={rows.length}
                     rowsPerPage={rowsPerPage}

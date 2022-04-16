@@ -1,19 +1,19 @@
 export interface IEmployee {
-    Id: string;
-    Name: string;
-    Email: string;
-    Role: string;
-    BirthDate: any;
-    Salary: number;
-    CreatedDate: any;
-    LastModifiedDate: any;
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+    birthDate: any;
+    salary: number;
+    createdDate: any;
+    lastModifiedDate: any;
 }
 
 export interface INewEmployee {    
-    Name: string;
-    Email: string;
-    Role: string;
-    BirthDate: any;
-    Salary: number;
-    Password: string;    
+    name: string;
+    email: string;
+    role: string;
+    birthDate: any;
+    salary: number;
+    password: string;    
 }

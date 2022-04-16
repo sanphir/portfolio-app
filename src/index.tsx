@@ -29,7 +29,7 @@ root.render(
           <Route index element={<EmployeesList />} />
         </Route> */}
 
-          <Route 
+          <Route
             path="/employees"
             element={
               <RequireAuth>

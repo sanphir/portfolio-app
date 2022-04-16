@@ -1,11 +1,12 @@
 import axios, { AxiosError } from "axios";
-import { ILoginInfo } from "../interfaces/ILoginInfo";
+import { ICommonResponse } from "../interfaces/ICommonResponse";
+import { ITokenInfo } from "../interfaces/ITokenInfo";
 
 const API_URL = "https://localhost:7039/";
 const TOKEN_URL = API_URL + "token";
 
 export class AuthService {
-    async login(username: string, password: string): Promise<ILoginInfo> {
+    async login(username: string, password: string): Promise<ICommonResponse<ITokenInfo>> {
         try {
             const response = await axios.post(TOKEN_URL, null, {
                 params: {
@@ -22,18 +23,18 @@ export class AuthService {
             localStorage.setItem("validTo", response.data.userName);
 
             return {
-                tokenResponse: response.data,
+                data: response.data,
                 error: null,
             };
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 return {
-                    tokenResponse: null,
+                    data: null,
                     error: (<AxiosError>error).response?.data?.errorText ?? "Something went wrong!",
                 };
             } else {
                 return {
-                    tokenResponse: null,
+                    data: null,
                     error: (<Error>error).message,
                 };
             }
