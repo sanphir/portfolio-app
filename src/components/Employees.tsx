@@ -10,7 +10,6 @@ export const Employees = () => {
   console.log(Date.now() + ': Employees');
 
   useEffect(() => {
-    console.log("Employees useEffect");
     let mounted = true;
     EmployeeService.getEmployees().then(resolve => {
       console.log("Employees useEffect");
@@ -20,7 +19,7 @@ export const Employees = () => {
         }
       } else {
         //TO DO
-        //handle error
+        //handle error and show notificator
       }
     });
 

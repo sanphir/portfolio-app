@@ -21,6 +21,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import EmployeeService from '../../services/EmployeeService';
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {
@@ -83,9 +84,22 @@ export default function EmployeesTable(props: EmployeesTableProps) {
         setOpenDeleteEmployeeAlert(false);
         if (dialogResult == DialogResult.YES) {
             //TO DO 
-            //add deleting and loader 
+            //add loader 
+
+            EmployeeService.removeEmployees([...selected]).then(resolve => {
+                console.log("Employees useEffect");
+                if (!resolve.error) {
+                    //TO DO
+                    //refresh table
+                    console.log('removeEmployees ok!');
+                } else {
+                    console.log('removeEmployees error: ' + resolve.error);
+                    //TO DO
+                    //add notificator with error
+                }
+            });
         }
-        console.log("Selected records "+JSON.stringify(selected));
+        console.log("Selected records " + JSON.stringify(selected));
     };
 
     const handleEditEmployee = (event: unknown) => {
@@ -114,7 +128,7 @@ export default function EmployeesTable(props: EmployeesTableProps) {
         setSelected([]);
     };
 
-    const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
+    const handleSelectCheckBoxClick = (event: React.MouseEvent<unknown>, name: string) => {
         const selectedIndex = selected.indexOf(name);
         let newSelected: readonly string[] = [];
 
@@ -199,17 +213,17 @@ export default function EmployeesTable(props: EmployeesTableProps) {
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
                                     //console.log('row'+index+': '+JSON.stringify(row));
-                                    const isItemSelected = isSelected(row.name.toString());
+                                    const isItemSelected = isSelected(row.id.toString());
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
                                     return (
                                         <TableRow
                                             hover
-                                            onClick={(event) => handleClick(event, row.name.toString())}
+                                            onClick={(event) => handleSelectCheckBoxClick(event, row.id.toString())}
                                             role="checkbox"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
-                                            key={row.name}
+                                            key={row.id}
                                             selected={isItemSelected}
                                         >
                                             <TableCell padding="checkbox">
@@ -229,6 +243,7 @@ export default function EmployeesTable(props: EmployeesTableProps) {
                                             >
                                                 {row.name}
                                             </TableCell>
+
                                             <TableCell align="left">{row.email}</TableCell>
                                             <TableCell align="left">{row.role}</TableCell>
                                             <TableCell align="left">{row.birthDate}</TableCell>

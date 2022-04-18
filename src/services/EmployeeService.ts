@@ -31,6 +31,36 @@ export class EmployeeService {
             }
         }
     }
+
+    async removeEmployees(idsToRemove: string[]): Promise<ICommonResponse<string>> {
+        console.log("invoke removeEmployees")
+
+        try {
+            const response = await axios.delete(API_URL + "api/Employee", {
+                headers: AuthService.authHeader(), data: 
+                    idsToRemove
+                ,
+            });
+
+            return {
+                data: "ok",
+                error: null,
+            };
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.log("removeEmployees error: "+JSON.stringify(error));
+                return {
+                    data: null,
+                    error: (<AxiosError>error).response?.data?.errorText ?? "Something went wrong!",
+                };
+            } else {
+                return {
+                    data: null,
+                    error: (<Error>error).message,
+                };
+            }
+        }
+    }
 }
 
 export default new EmployeeService();
