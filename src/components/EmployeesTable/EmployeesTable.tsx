@@ -13,7 +13,14 @@ import Switch from '@mui/material/Switch';
 import { EmployeesTableToolbar } from './EmployeesTableToolbar';
 import { IEmployee } from '../../interfaces/IEmployee';
 import { EmployeesTableHead } from './EmployeesTableHead';
-import { Order } from './EmployeesTableCommon';
+import { DialogResult, Order } from './EmployeesTableCommon';
+
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {
@@ -32,7 +39,7 @@ function getComparator<Key extends keyof any>(
         a: { [key in Key]: number | string },
         b: { [key in Key]: number | string },
     ) => number {
-    return order === 'desc'
+    return order === Order.DESC
         ? (a, b) => descendingComparator(a, b, orderBy)
         : (a, b) => -descendingComparator(a, b, orderBy);
 }
@@ -58,19 +65,43 @@ interface EmployeesTableProps {
 export default function EmployeesTable(props: EmployeesTableProps) {
     const { rows } = props;
 
-    const [order, setOrder] = React.useState<Order>('asc');
+    const [order, setOrder] = React.useState<Order>(Order.ASC);
     const [orderBy, setOrderBy] = React.useState<keyof IEmployee>('name');
     const [selected, setSelected] = React.useState<readonly string[]>([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
+    const [openDeleteEmployeeAlert, setOpenDeleteEmployeeAlert] = React.useState(false);
+
+    const handleDeleteEmployee = (event: unknown) => {
+        setOpenDeleteEmployeeAlert(true);
+        //console.log('Delete employee click');
+    }
+
+    const handleDeleteEmployeeAlert = (event: unknown, dialogResult: DialogResult) => {
+        setOpenDeleteEmployeeAlert(false);
+        if (dialogResult == DialogResult.YES) {
+            //TO DO 
+            //add deleting and loader 
+        }
+        console.log("Selected records "+JSON.stringify(selected));
+    };
+
+    const handleEditEmployee = (event: unknown) => {
+        console.log('Edit employee click');
+    }
+
+    const handleNewEmployee = (event: unknown) => {
+        console.log('New employee click');
+    }
+
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
         property: keyof IEmployee,
     ) => {
-        const isAsc = orderBy === property && order === 'asc';
-        setOrder(isAsc ? 'desc' : 'asc');
+        const isAsc = orderBy === property && order === Order.ASC;
+        setOrder(isAsc ? Order.DESC : Order.ASC);
         setOrderBy(property);
     };
 
@@ -125,7 +156,28 @@ export default function EmployeesTable(props: EmployeesTableProps) {
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
-                <EmployeesTableToolbar numSelected={selected.length} />
+                <Dialog
+                    open={openDeleteEmployeeAlert}
+                    onClose={(e) => handleDeleteEmployeeAlert(e, DialogResult.CANCEL)}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title" >
+                        {"Deleting"}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            Are you sure you want to delete {selected.length} selected employees records?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={(e) => handleDeleteEmployeeAlert(e, DialogResult.CANCEL)}><b>Cancel</b></Button>
+                        <Button onClick={(e) => handleDeleteEmployeeAlert(e, DialogResult.YES)} autoFocus>
+                            Yes
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+                <EmployeesTableToolbar numSelected={selected.length} onDeleteEmployee={handleDeleteEmployee} onEditEmployee={handleEditEmployee} onNewEmployee={handleNewEmployee} />
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 750 }}
