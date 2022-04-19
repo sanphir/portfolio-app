@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
@@ -14,7 +14,7 @@ export const Login = () => {
     const [loginError, setLoginError] = useState(false);
 
     const login = async () => {
-                
+
         const loginResponse = await AuthService.login(
             loginFieldRef.current?.value ?? "",
             pwdFieldRef.current?.value ?? ""
@@ -64,6 +64,11 @@ export const Login = () => {
                             type="password"
                             variant="outlined"
                             inputRef={pwdFieldRef}
+                            onKeyUp={(e) => {
+                                if (e.key === 'Enter') {
+                                    login();
+                                }
+                            }}
                         //onChange={setPwdValue}
                         />
                         <br />

@@ -1,4 +1,7 @@
 import * as React from 'react';
+import { useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -10,61 +13,31 @@ import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
-import { EmployeesTableToolbar } from './EmployeesTableToolbar';
-import { IEmployee } from '../../interfaces/IEmployee';
-import { EmployeesTableHead } from './EmployeesTableHead';
-import { DialogResult, Order } from './EmployeesTableCommon';
-
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+
+import { EmployeesTableToolbar } from './EmployeesTableToolbar';
+import { EmployeesTableHead } from './EmployeesTableHead';
+import { DialogResult, Order, getComparator, stableSort } from './EmployeesTableCommon';
+import { IEmployee } from '../../interfaces/IEmployee';
 import EmployeeService from '../../services/EmployeeService';
 
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-    if (b[orderBy] < a[orderBy]) {
-        return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-        return 1;
-    }
-    return 0;
-}
+import { useAppSelector, useAppDispatch } from '../../common/hooks';
+import {
+    getEmployeesAsync,
+    setEmployees,
+    selectEmployees,
+    removeEmployee
+} from '../../reducers/employeesSlice';
 
-function getComparator<Key extends keyof any>(
-    order: Order,
-    orderBy: Key,
-): (
-        a: { [key in Key]: number | string },
-        b: { [key in Key]: number | string },
-    ) => number {
-    return order === Order.DESC
-        ? (a, b) => descendingComparator(a, b, orderBy)
-        : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-// This method is created for cross-browser compatibility, if you don't
-// need to support IE11, you can use Array.prototype.sort() directly
-function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
-    const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-    stabilizedThis.sort((a, b) => {
-        const order = comparator(a[0], b[0]);
-        if (order !== 0) {
-            return order;
-        }
-        return a[1] - b[1];
-    });
-    return stabilizedThis.map((el) => el[0]);
-}
-
-interface EmployeesTableProps {
-    rows: IEmployee[];
-}
-
-export default function EmployeesTable(props: EmployeesTableProps) {
-    const { rows } = props;
+export default function EmployeesTable() {
+    const rows = useAppSelector(selectEmployees);
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
 
     const [order, setOrder] = React.useState<Order>(Order.ASC);
     const [orderBy, setOrderBy] = React.useState<keyof IEmployee>('name');
@@ -77,7 +50,6 @@ export default function EmployeesTable(props: EmployeesTableProps) {
 
     const handleDeleteEmployee = (event: unknown) => {
         setOpenDeleteEmployeeAlert(true);
-        //console.log('Delete employee click');
     }
 
     const handleDeleteEmployeeAlert = (event: unknown, dialogResult: DialogResult) => {
@@ -89,8 +61,7 @@ export default function EmployeesTable(props: EmployeesTableProps) {
             EmployeeService.removeEmployees([...selected]).then(resolve => {
                 console.log("Employees useEffect");
                 if (!resolve.error) {
-                    //TO DO
-                    //refresh table
+                    dispatch(removeEmployee([...selected]));
                     console.log('removeEmployees ok!');
                 } else {
                     console.log('removeEmployees error: ' + resolve.error);
@@ -104,10 +75,14 @@ export default function EmployeesTable(props: EmployeesTableProps) {
 
     const handleEditEmployee = (event: unknown) => {
         console.log('Edit employee click');
+        console.log(`/employees/${selected[0]}`);
+        console.log(navigate);
+        navigate(`/employees/${selected[0]}`, { replace: false, state: rows.find(r => r.id === selected[0]) });
     }
 
     const handleNewEmployee = (event: unknown) => {
         console.log('New employee click');
+        navigate('/employees/new', { replace: true });
     }
 
     const handleRequestSort = (
@@ -168,7 +143,13 @@ export default function EmployeesTable(props: EmployeesTableProps) {
 
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;        
+        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+
+    useEffect(() => {
+        console.log("EmployeesTable useEffect");
+        dispatch(getEmployeesAsync());
+        return () => { }
+    }, []);
 
     return (
         <Box sx={{ width: '100%' }}>

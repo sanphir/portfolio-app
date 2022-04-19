@@ -10,7 +10,7 @@ export class EmployeeService {
         console.log("invoke getEmployees")
 
         try {
-            const response = await axios.get(API_URL + "api/Employee/list", { headers: AuthService.authHeader() });
+            const response = await axios.get(`${API_URL}api/Employee/list`, { headers: AuthService.authHeader() });
             //console.log(Date.now()+': We get Employees: '+response.data);
 
             return {
@@ -36,7 +36,7 @@ export class EmployeeService {
         console.log("invoke removeEmployees")
 
         try {
-            const response = await axios.delete(API_URL + "api/Employee", {
+            const response = await axios.delete(`${API_URL}api/Employee`, {
                 headers: AuthService.authHeader(), data: 
                     idsToRemove
                 ,

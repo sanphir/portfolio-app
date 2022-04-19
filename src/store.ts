@@ -4,7 +4,7 @@ import employeesReducer from './reducers/employeesSlice';
 export const store = configureStore({
   reducer: {
     employees: employeesReducer,
-  },
+  }
 });
 
 export type AppDispatch = typeof store.dispatch;
@@ -15,3 +15,4 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   unknown,
   Action<string>
 >;
+
