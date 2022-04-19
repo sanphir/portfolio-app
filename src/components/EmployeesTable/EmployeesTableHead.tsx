@@ -21,43 +21,43 @@ const headCells: readonly HeadCell[] = [
         id: 'name',
         numeric: false,
         disablePadding: true,
-        label: 'name',
+        label: 'Name',
     },
     {
         id: 'email',
         numeric: false,
         disablePadding: false,
-        label: 'email',
+        label: 'Email',
     },
     {
         id: 'role',
         numeric: false,
         disablePadding: false,
-        label: 'role',
+        label: 'Role',
     },
     {
         id: 'birthDate',
         numeric: false,
         disablePadding: false,
-        label: 'birthDate',
+        label: 'Birth date',
     },
     {
         id: 'salary',
         numeric: true,
         disablePadding: false,
-        label: 'salary',
+        label: 'Salary',
     },
     {
         id: 'createdDate',
         numeric: false,
         disablePadding: false,
-        label: 'createdDate',
+        label: 'Created date',
     },
     {
         id: 'lastModifiedDate',
         numeric: false,
         disablePadding: false,
-        label: 'lastModifiedDate',
+        label: 'Last modified date',
     },
 ];
 
@@ -95,6 +95,7 @@ export const EmployeesTableHead = (props: EmployeesTableHeadProps) => {
                 {headCells.map((headCell) => (
                     <TableCell
                         key={headCell.id}
+                        sx={{ fontWeight: "bold" }}                        
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
                         sortDirection={orderBy === headCell.id ? order : false}

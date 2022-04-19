@@ -163,9 +163,12 @@ export default function EmployeesTable(props: EmployeesTableProps) {
 
     const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
+    // Specify date and time format using "style" options (i.e. full, long, medium, short)
+    const dateFormater = new Intl.DateTimeFormat(window.navigator.language, { dateStyle: 'short', timeStyle: 'medium' });
+
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;        
 
     return (
         <Box sx={{ width: '100%' }}>
@@ -246,10 +249,10 @@ export default function EmployeesTable(props: EmployeesTableProps) {
 
                                             <TableCell align="left">{row.email}</TableCell>
                                             <TableCell align="left">{row.role}</TableCell>
-                                            <TableCell align="left">{row.birthDate}</TableCell>
+                                            <TableCell align="left">{dateFormater.format(Date.parse(row.birthDate.toString()))}</TableCell>
                                             <TableCell align="right">{row.salary}</TableCell>
-                                            <TableCell align="left">{row.createdDate}</TableCell>
-                                            <TableCell align="left">{row.lastModifiedDate}</TableCell>
+                                            <TableCell align="left">{dateFormater.format(Date.parse(row.createdDate.toString()))}</TableCell>
+                                            <TableCell align="left">{dateFormater.format(Date.parse(row.lastModifiedDate.toString()))}</TableCell>
                                         </TableRow>
                                     );
                                 })}
