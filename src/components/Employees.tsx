@@ -1,32 +1,27 @@
 import React, { useEffect, useState } from 'react'
-import EmployeeService from '../services/EmployeeService';
 import { IEmployee } from '../interfaces/IEmployee';
 import EmployeesTable from './EmployeesTable/EmployeesTable';
-import { Console } from 'console';
+import { useAppSelector, useAppDispatch } from '../common/hooks';
+import {
+  getEmployeesAsync,
+  setEmployees,
+  selectEmployees
+} from '../reducers/employeesSlice';
 
 
 export const Employees = () => {
-  const [employees, setEmployees] = useState<IEmployee[]>([]);
+  const employees = useAppSelector(selectEmployees);
+  const dispatch = useAppDispatch();
+  const [employeesRows, setEmployeesRows] = useState<IEmployee[]>([]);
   console.log(Date.now() + ': Employees');
 
-  useEffect(() => {
-    let mounted = true;
-    EmployeeService.getEmployees().then(resolve => {
-      console.log("Employees useEffect");
-      if (!resolve.error) {
-        if (mounted) {
-          setEmployees(resolve.data ?? []);
-        }
-      } else {
-        //TO DO
-        //handle error and show notificator
-      }
-    });
 
-    return () => {
-      mounted = false;
-    }
+  useEffect(() => {
+    console.log("Employees useEffect");
+    dispatch(getEmployeesAsync());
+    return () => { }
   }, []);
+
   return (
     <EmployeesTable rows={employees} />
   );
