@@ -1,6 +1,5 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -12,6 +11,8 @@ export const Login = () => {
     const loginFieldRef = useRef<HTMLInputElement>();
     const pwdFieldRef = useRef<HTMLInputElement>();
     const [loginError, setLoginError] = useState(false);
+    const [loginDisabled, setLoginDisabled] = useState(true);
+    const [loginErrorMessage, setLoginErrorMessage] = useState("");
 
     const login = async () => {
 
@@ -31,54 +32,86 @@ export const Login = () => {
             console.log("Navigate to employee/list");
         } else {
             setLoginError(true);
+            setLoginErrorMessage(loginResponse.error ?? "Login failed");
+            setLoginDisabled(true);
+        }
+    };
+
+    const handleChange = (newValue: any | null) => {
+        if (loginFieldRef.current?.value && pwdFieldRef.current?.value) {
+            if (loginError) {
+                setLoginError(false);
+                setLoginErrorMessage("");
+            }
+            setLoginDisabled(false);
         }
     };
 
     return (
         <Container>
-            <Grid
-                container
-                style={{ height: window.innerHeight - 50 }}
-                alignItems={"center"}
-            /* justify={"center"} */
-            >
-                <Grid
-                    container item
-                    style={{ width: 400 }}
-                    alignItems={"center"}
-                    direction={"column"}
-                >
-                    <Box>
-                        <TextField
-                            id="loginTextField"
-                            error={loginError}
-                            label="Login name"
-                            variant="outlined"
-                            inputRef={loginFieldRef}
-                        />
-                        <br />
-                        <br />
-                        <TextField
-                            id="pwdTextField"
-                            label="Password"
-                            type="password"
-                            variant="outlined"
-                            inputRef={pwdFieldRef}
-                            onKeyUp={(e) => {
-                                if (e.key === 'Enter') {
+            <Box style={{
+                height: window.innerHeight - 60,
+                padding: 0,
+                margin: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+            }}>
+                <div style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center"
+                }}>
+                    <TextField
+                        id="loginTextField"
+                        style={{
+                            margin: "10px"
+                        }}
+                        error={loginError}
+                        label="Login name"
+                        variant="outlined"
+                        inputRef={loginFieldRef}
+                        helperText={loginErrorMessage}
+                        onChange={handleChange}
+                        onKeyUp={(e) => {
+                            if (e.key === 'Enter') {
+                                if (loginFieldRef.current?.value && pwdFieldRef.current?.value && !loginError) {
                                     login();
                                 }
-                            }}
-                        //onChange={setPwdValue}
-                        />
-                        <br />
-                        <br />
-                        <Button onClick={login} variant="outlined">
-                            Login
-                        </Button>
-                    </Box>
-                </Grid>
-            </Grid>
+                            }
+                        }}
+                    />
+
+                    <TextField
+                        id="pwdTextField"
+                        style={{
+                            margin: "10px"
+                        }}
+                        label="Password"
+                        type="password"
+                        variant="outlined"
+                        inputRef={pwdFieldRef}
+                        error={loginError}
+                        onChange={handleChange}
+                        onKeyUp={(e) => {
+                            if (e.key === 'Enter') {
+                                if (loginFieldRef.current?.value && pwdFieldRef.current?.value && !loginError) {
+                                    login();
+                                }
+                            }
+                        }}
+                    />
+
+                    <Button onClick={login} variant="outlined"
+                        size="large"
+                        disabled={loginDisabled}
+                        style={{
+                            margin: "10px"
+                        }}>
+                        Login
+                    </Button>
+                </div>
+            </Box>
         </Container>
     )
 }

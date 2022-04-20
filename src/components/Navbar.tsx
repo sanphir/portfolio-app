@@ -37,7 +37,6 @@ export const Navbar = () => {
                 case "/notfound": return "Not found page";
                 default: return "";
             }
-
         }
         return "";
     }
