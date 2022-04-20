@@ -20,7 +20,7 @@ export class AuthService {
             localStorage.setItem("accessToken", response.data.accessToken);
             localStorage.setItem("userName", response.data.userName);
             localStorage.setItem("role", response.data.role);
-            localStorage.setItem("validTo", response.data.userName);
+            localStorage.setItem("validTo", response.data.validTo);
 
             return {
                 data: response.data,
@@ -49,7 +49,12 @@ export class AuthService {
     }
 
     isAuth(): boolean {
-        return localStorage.getItem("accessToken") != null;
+        if (localStorage.getItem("accessToken") && localStorage.getItem("validTo")) {
+            //console.log(`Valid to: ${localStorage.getItem("validTo")} now ${Date.now()}`)
+            //console.log(`Parse valid to: ${Date.parse(localStorage.getItem("validTo") ?? "")} now ${Date.now()}`)
+            return Date.parse(localStorage.getItem("validTo") ?? "") > Date.now();
+        }
+        return false;
     }
 
     authHeader(): any {

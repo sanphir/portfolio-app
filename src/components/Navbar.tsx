@@ -1,6 +1,5 @@
-import React from "react";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import "../styles/App.css";
+import { useNavigate, Link } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -35,18 +34,26 @@ export const Navbar = () => {
                         {isAuth ? "Hi, " + localStorage.getItem("userName") + "!" : ""}
                     </Typography>
                     {!isAuth && (
-                        <Button color="inherit" onClick={login}>
-                            Login
-                        </Button>
+                        <div>
+                            <Link to='home' className="navLink" >
+                                Home
+                            </Link>
+                            <Button color="inherit" onClick={login}>
+                                Login
+                            </Button>
+                        </div>
                     )}
                     {isAuth && (
                         <div>
-                        <Button color="inherit" onClick={()=>   navigate('employees')}>
-                            Employees
-                        </Button>
-                        <Button color="inherit" onClick={logout}>
-                            Logout
-                        </Button>
+                            <Link to='home' className="navLink"  >
+                                Home
+                            </Link>
+                            <Link to='employees' className="navLink" >
+                                Employees
+                            </Link>
+                            <Button color="inherit" onClick={logout}>
+                                Logout
+                            </Button>
                         </div>
                     )}
                 </Toolbar>

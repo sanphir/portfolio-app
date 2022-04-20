@@ -12,7 +12,7 @@ import { EmployeeForm } from "./components/EmployeeForm";
 import { Provider } from 'react-redux'
 import NotFound from "./components/NotFound";
 import { RequireAuth } from './components/RequireAuth';
-import { store } from './store';
+import { store } from './redux/store';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -25,6 +25,7 @@ root.render(
         <Routes>
           <Route path="/" element={<App />}>
             <Route index element={<Home />} />
+            <Route path='home' element={<Home />} />
             <Route path="login" element={<Login />} />
             <Route
               path="employees"
@@ -34,12 +35,18 @@ root.render(
                 </RequireAuth>
               }
             />
-            {/* <Route path="new" element={<EmployeeForm />} /> */}
-            <Route path="employees/:id"          element={
-                <RequireAuth>
-                  <EmployeeForm />
-                </RequireAuth>
-              } />
+
+            <Route path="employees/new" element={
+              <RequireAuth>
+                <EmployeeForm />
+              </RequireAuth>
+            } />
+
+            <Route path="employees/:id" element={
+              <RequireAuth>
+                <EmployeeForm />
+              </RequireAuth>
+            } />
 
 
             <Route path="notfound" element={<NotFound />} />

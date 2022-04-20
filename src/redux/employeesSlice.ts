@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState, AppThunk } from '../store';
+import { RootState, AppThunk } from './store';
 import EmployeeService from '../services/EmployeeService';
 import { IEmployee } from '../interfaces/IEmployee';
 

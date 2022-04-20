@@ -26,13 +26,13 @@ import { DialogResult, Order, getComparator, stableSort } from './EmployeesTable
 import { IEmployee } from '../../interfaces/IEmployee';
 import EmployeeService from '../../services/EmployeeService';
 
-import { useAppSelector, useAppDispatch } from '../../common/hooks';
+import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import {
     getEmployeesAsync,
     setEmployees,
     selectEmployees,
     removeEmployee
-} from '../../reducers/employeesSlice';
+} from '../../redux/employeesSlice';
 
 export default function EmployeesTable() {
     const rows = useAppSelector(selectEmployees);

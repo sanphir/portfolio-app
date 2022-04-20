@@ -1,0 +1,12 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: 0;
+}
+
+a.navLink {
+  text-decoration: none;
+  text-transform: uppercase;
+  color: white;
+  margin-right: 20px;
+}
