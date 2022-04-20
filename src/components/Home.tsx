@@ -1,6 +1,3 @@
-import { borderRadius } from '@mui/system'
-import React from 'react'
-
 export const Home = () => {
     return (
         <div style={{
@@ -12,7 +9,7 @@ export const Home = () => {
         }}>
             <h2 style={{ padding: "10px 20px", textAlign: "center", color: "rgb(25, 118, 210)" }}>Welcome!</h2>
 
-            <h3 style={{ padding: "10px 20px", textAlign: "center", color: "rgb(25, 118, 210)" }}>It's just a simple demo app with which I learn react technologies</h3>
+            <h3 style={{ padding: "10px 20px", textAlign: "center", color: "rgb(25, 118, 210)" }}>This is a simple demo app that I use to learn react.</h3>
 
         </div>
     )

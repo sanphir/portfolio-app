@@ -10,3 +10,23 @@ a.navLink {
   color: white;
   margin-right: 20px;
 }
+
+div.formBlock {
+  display: flex;
+  flex-direction: row;
+  margin: 40px;
+  justify-content: center;
+  padding: 40px;
+  border-radius: 10px;
+}
+
+div.formBlockChild {
+  /* background-color: rgb(250, 250, 210, 0.6);   */
+  padding: inherit;
+  display: inherit;
+  flex-direction: column;
+}
+
+#root {
+  height: 100vh;
+}

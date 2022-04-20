@@ -82,7 +82,7 @@ export default function EmployeesTable() {
 
     const handleNewEmployee = (event: unknown) => {
         console.log('New employee click');
-        navigate('/employees/new', { replace: true });
+        navigate('/employees/new', { replace: false });
     }
 
     const handleRequestSort = (
