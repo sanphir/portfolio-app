@@ -5,9 +5,12 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import AuthService from "../services/AuthService";
+import { useAppDispatch } from '../redux/hooks';
+import { setLoaderDisplayed, setLoaderNone } from '../redux/loaderSlice';
 
 export const Login = () => {
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
     const loginFieldRef = useRef<HTMLInputElement>();
     const pwdFieldRef = useRef<HTMLInputElement>();
     const [loginError, setLoginError] = useState(false);
@@ -15,25 +18,29 @@ export const Login = () => {
     const [loginErrorMessage, setLoginErrorMessage] = useState("");
 
     const login = async () => {
+        dispatch(setLoaderDisplayed());
+        try {
+            const loginResponse = await AuthService.login(
+                loginFieldRef.current?.value ?? "",
+                pwdFieldRef.current?.value ?? ""
+            );
+            if (loginResponse.data != null) {
+                console.log(loginResponse.data);
+                console.log("accessToken=" + loginResponse.data.accessToken);
+                console.log("userName=" + loginResponse.data.userName);
+                console.log("validTo=" + loginResponse.data.validTo);
+                console.log("role=" + loginResponse.data.role);
+                setLoginError(false);
 
-        const loginResponse = await AuthService.login(
-            loginFieldRef.current?.value ?? "",
-            pwdFieldRef.current?.value ?? ""
-        );
-        if (loginResponse.data != null) {
-            console.log(loginResponse.data);
-            console.log("accessToken=" + loginResponse.data.accessToken);
-            console.log("userName=" + loginResponse.data.userName);
-            console.log("validTo=" + loginResponse.data.validTo);
-            console.log("role=" + loginResponse.data.role);
-            setLoginError(false);
-
-            navigate("/employees", { replace: true });
-            console.log("Navigate to employee/list");
-        } else {
-            setLoginError(true);
-            setLoginErrorMessage(loginResponse.error ?? "Login failed");
-            setLoginDisabled(true);
+                navigate("/employees", { replace: true });
+                console.log("Navigate to employee/list");
+            } else {
+                setLoginError(true);
+                setLoginErrorMessage(loginResponse.error ?? "Login failed");
+                setLoginDisabled(true);
+            }
+        } finally {
+            dispatch(setLoaderNone());
         }
     };
 

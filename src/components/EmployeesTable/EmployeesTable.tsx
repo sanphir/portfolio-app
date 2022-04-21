@@ -33,6 +33,7 @@ import {
     selectEmployees,
     removeEmployee
 } from '../../redux/employeesSlice';
+import { setLoaderDisplayed, setLoaderNone } from '../../redux/loaderSlice';
 
 export default function EmployeesTable() {
     const rows = useAppSelector(selectEmployees);
@@ -76,7 +77,7 @@ export default function EmployeesTable() {
 
     const handleEditEmployee = (event: unknown) => {
         console.log('Edit employee click');
-        console.log(`/employees/${selected[0]}`);        
+        console.log(`/employees/${selected[0]}`);
         navigate(`/employees/${selected[0]}`, { replace: false, state: rows.find(r => r.id === selected[0]) });
     }
 
@@ -147,7 +148,12 @@ export default function EmployeesTable() {
 
     useEffect(() => {
         console.log("EmployeesTable useEffect");
-        dispatch(getEmployeesAsync());
+        dispatch(setLoaderDisplayed());
+        try {
+            dispatch(getEmployeesAsync());
+        } finally {
+            dispatch(setLoaderNone());
+        }
         return () => { }
     }, []);
 
