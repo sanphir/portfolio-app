@@ -47,6 +47,11 @@ export const employeesSlice = createSlice({
             state.value = [...state.value, action.payload];
         },
 
+        updateEmployee: (state, action: PayloadAction<IEmployee>) => {
+            var empIdx = state.value.findIndex(e => e.id == action.payload.id);
+            state.value[empIdx] = action.payload;
+        },
+
         removeEmployee: (state, action: PayloadAction<string[]>) => {
             state.value = state.value.filter(e => !action.payload.includes(e.id));
         },
@@ -65,7 +70,7 @@ export const employeesSlice = createSlice({
     },
 });
 
-export const { setEmployees, addEmployee, removeEmployee } = employeesSlice.actions;
+export const { setEmployees, addEmployee, removeEmployee, updateEmployee } = employeesSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of

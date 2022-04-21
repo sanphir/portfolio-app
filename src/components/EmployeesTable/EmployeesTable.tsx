@@ -62,6 +62,7 @@ export default function EmployeesTable() {
                 console.log("Employees useEffect");
                 if (!resolve.error) {
                     dispatch(removeEmployee([...selected]));
+                    setSelected([]);
                     console.log('removeEmployees ok!');
                 } else {
                     console.log('removeEmployees error: ' + resolve.error);
@@ -75,8 +76,7 @@ export default function EmployeesTable() {
 
     const handleEditEmployee = (event: unknown) => {
         console.log('Edit employee click');
-        console.log(`/employees/${selected[0]}`);
-        console.log(navigate);
+        console.log(`/employees/${selected[0]}`);        
         navigate(`/employees/${selected[0]}`, { replace: false, state: rows.find(r => r.id === selected[0]) });
     }
 

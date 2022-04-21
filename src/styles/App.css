@@ -23,7 +23,7 @@ div.formBlock {
 div.formBlockChild {
   /* background-color: rgb(250, 250, 210, 0.6);   */
   padding: inherit;
-  display: inherit;
+  display: flex;
   flex-direction: column;
 }
 

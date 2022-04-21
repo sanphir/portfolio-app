@@ -1,19 +1,20 @@
-export interface IEmployee {
-    id: string;
+interface BaseEmployee {
     name: string;
     email: string;
     role: string;
     birthDate: any;
     salary: number;
+}
+
+export interface IEmployee extends IUpdateEmployee {
     createdDate: any;
     lastModifiedDate: any;
 }
 
-export interface INewEmployee {    
-    name: string;
-    email: string;
-    role: string;
-    birthDate: any;
-    salary: number;
-    password: string;    
+export interface IUpdateEmployee extends BaseEmployee {
+    id: string;
+}
+
+export interface INewEmployee extends BaseEmployee {
+    password: string;
 }
