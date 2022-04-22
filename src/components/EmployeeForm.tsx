@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { useAppDispatch } from '../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { addEmployee, updateEmployee } from '../redux/employeesSlice';
 
 import Box from '@mui/material/Box';
@@ -16,6 +16,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { IEmployee, IUpdateEmployee, INewEmployee } from '../interfaces/IEmployee';
 import EmployeeService from '../services/EmployeeService';
+import { getTokenInfo } from '../redux/authSlice';
 
 
 export const EmployeeForm = () => {
@@ -23,6 +24,7 @@ export const EmployeeForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const tokenInfo = useAppSelector(getTokenInfo);
   const pwdFieldRef = React.useRef<HTMLInputElement>();
   const confirmPwdFieldRef = React.useRef<HTMLInputElement>();
   const employee: IEmployee = (location.state as IEmployee) ?? {};
@@ -34,7 +36,7 @@ export const EmployeeForm = () => {
   const [emailValue, setEmailValue] = React.useState<string | null>(employee?.email ?? "");
   const [roleValue, setRoleValue] = React.useState<string>(employee?.role ?? "user");
   const [salaryValue, setSalaryValue] = React.useState<number | null>(employee?.salary ?? "");
-  
+
   let birthDate = employee?.createdDate ? Date.parse(employee?.birthDate) : Date.now();
   const [birthDateValue, setbirthDateValue] = React.useState<Date | null>(new Date(birthDate));
 
@@ -64,7 +66,7 @@ export const EmployeeForm = () => {
       salary: salaryValue ?? employee.salary
     };
 
-    EmployeeService.updateEmployee(updatedEmployee).then(resolve => {
+    EmployeeService.updateEmployee(updatedEmployee, tokenInfo?.accessToken ?? "").then(resolve => {
       if (!resolve.error) {
         dispatch(updateEmployee(resolve.data ?? {} as IEmployee));
         console.log('updatedEmployees ok!');
@@ -86,7 +88,7 @@ export const EmployeeForm = () => {
       password: pwdFieldRef.current?.value ?? ""
     };
 
-    EmployeeService.addEmployee(newEmployee).then(resolve => {
+    EmployeeService.addEmployee(newEmployee, tokenInfo?.accessToken ?? "").then(resolve => {
       if (!resolve.error) {
         let responseEmployee = resolve.data ?? {} as IEmployee;
         dispatch(addEmployee(responseEmployee));
@@ -115,7 +117,7 @@ export const EmployeeForm = () => {
   React.useEffect(() => {
     console.log(`isNew=${isNew} employee=${employee} params.id=${params.id}`)
     if (!isNew && !(location.state as IEmployee) && params.id) {
-      EmployeeService.getEmployee(params.id ?? "").then(resolve => {
+      EmployeeService.getEmployee(params.id ?? "", tokenInfo?.accessToken ?? "").then(resolve => {
         if (!resolve.error) {
           console.log('getEmployee ok!');
           let getedEmployee = (resolve?.data as IEmployee);

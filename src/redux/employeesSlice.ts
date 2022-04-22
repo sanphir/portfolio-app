@@ -26,8 +26,8 @@ const initialState: EmployeesState = {
 // typically used to make async requests.
 export const getEmployeesAsync = createAsyncThunk(
     'employeesSlice/fetch',
-    async () => {
-        const response = await EmployeeService.getEmployees();
+    async (token: string) => {
+        const response = await EmployeeService.getEmployees(token);
         // The value we return becomes the `fulfilled` action payload
         return response.data;
     }

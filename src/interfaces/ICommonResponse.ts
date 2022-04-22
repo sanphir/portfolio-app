@@ -1,4 +1,4 @@
-type Nullable<T> = T | null;
+import { Nullable } from "./Common";
 
 export interface ICommonResponse<T> {
     data: Nullable<T>;

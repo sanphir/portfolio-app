@@ -1,25 +1,28 @@
 import "../styles/App.css";
 import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import AuthService from "../services/AuthService";
-import { homedir } from "os";
+import { clearToken, getTokenInfo } from '../redux/authSlice';
+import { isAuthenticated } from "../helpers/authChecker";
 
 export const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    let isAuth = AuthService.isAuth();
+    const tokenInfo = useAppSelector(getTokenInfo);
+    const dispatch = useAppDispatch();
+    let isAuth = isAuthenticated(tokenInfo);
 
-    const login = () => {
-        navigate('login')
+    const siginClick = () => {
+        navigate('signin');
     };
 
-    const logout = () => {
-        AuthService.logout();
-        navigate('login')
+    const signoutClick = () => {
+        dispatch(clearToken());
+        navigate('signin')
     };
 
     const pageName = (): string => {
@@ -30,9 +33,8 @@ export const Navbar = () => {
             }
             switch (location.pathname) {
                 case "/home": return "Home page";
-                case "/login": return "Login page";
+                case "/signin": return "Sig in page";
                 case "/employees": return "Employees page";
-                //case "/employees/:id": return "Employee page";
                 case "/employees/new": return "New employee page";
                 case "/notfound": return "Not found page";
                 default: return "";
@@ -48,16 +50,13 @@ export const Navbar = () => {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         {pageName()}
                     </Typography>
-                    {/* <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        {isAuth ? "Hi, " + localStorage.getItem("userName") + "!" : ""}
-                    </Typography> */}
                     {!isAuth && (
                         <div>
                             <Link to='home' className="navLink" >
                                 Home
                             </Link>
-                            <Button color="inherit" onClick={login}>
-                                Login
+                            <Button color="inherit" onClick={siginClick}>
+                                Sign in
                             </Button>
                         </div>
                     )}
@@ -69,8 +68,8 @@ export const Navbar = () => {
                             <Link to='employees' className="navLink" >
                                 Employees
                             </Link>
-                            <Button color="inherit" onClick={logout}>
-                                {`Logout(${localStorage.getItem("userName")})`}
+                            <Button color="inherit" onClick={signoutClick}>
+                                {`Sign out(${localStorage.getItem("userName")})`}
                             </Button>
                         </div>
                     )}

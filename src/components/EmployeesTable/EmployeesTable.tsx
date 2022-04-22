@@ -34,9 +34,11 @@ import {
     removeEmployee
 } from '../../redux/employeesSlice';
 import { setLoaderDisplayed, setLoaderNone } from '../../redux/loaderSlice';
+import { getTokenInfo } from '../../redux/authSlice';
 
 export default function EmployeesTable() {
     const rows = useAppSelector(selectEmployees);
+    const tokenInfo = useAppSelector(getTokenInfo);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
@@ -59,7 +61,7 @@ export default function EmployeesTable() {
             //TO DO 
             //add loader 
 
-            EmployeeService.removeEmployees([...selected]).then(resolve => {
+            EmployeeService.removeEmployees([...selected], tokenInfo?.accessToken ?? "").then(resolve => {
                 console.log("Employees useEffect");
                 if (!resolve.error) {
                     dispatch(removeEmployee([...selected]));
@@ -150,7 +152,7 @@ export default function EmployeesTable() {
         console.log("EmployeesTable useEffect");
         dispatch(setLoaderDisplayed());
         try {
-            dispatch(getEmployeesAsync());
+            dispatch(getEmployeesAsync(tokenInfo?.accessToken ?? ""));
         } finally {
             dispatch(setLoaderNone());
         }

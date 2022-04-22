@@ -5,14 +5,15 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import { Login } from "./components/Login";
-import { Home } from "./components/Home";
+import { Signin } from "./components/Signin";
+import { Home } from "./pages/Home";
 import EmployeesTable from "./components/EmployeesTable/EmployeesTable";
 import { EmployeeForm } from "./components/EmployeeForm";
 import { Provider } from 'react-redux'
-import NotFound from "./components/NotFound";
-import { RequireAuth } from './components/RequireAuth';
+import NotFound from "./pages/NotFound";
+import { RequireAuth, UserRole } from './hoc/RequireAuth';
 import { store } from './redux/store';
+import DeniedPage from './pages/DeniedPage';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -26,25 +27,31 @@ root.render(
           <Route path="/" element={<App />}>
             <Route index element={<Home />} />
             <Route path='home' element={<Home />} />
-            <Route path="login" element={<Login />} />
+            <Route path="signin" element={<Signin />} />
             <Route
               path="employees"
               element={
-                <RequireAuth>
+                <RequireAuth role={UserRole.Any}>
                   <EmployeesTable />
                 </RequireAuth>
               }
             />
 
             <Route path="employees/new" element={
-              <RequireAuth>
+              <RequireAuth role={UserRole.Admin}>
                 <EmployeeForm />
               </RequireAuth>
             } />
 
             <Route path="employees/:id" element={
-              <RequireAuth>
+              <RequireAuth role={UserRole.Admin}>
                 <EmployeeForm />
+              </RequireAuth>
+            } />
+
+            <Route path="denied" element={
+              <RequireAuth role={UserRole.Any}>
+                <DeniedPage />
               </RequireAuth>
             } />
 

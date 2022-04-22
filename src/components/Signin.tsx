@@ -7,17 +7,21 @@ import Button from "@mui/material/Button";
 import AuthService from "../services/AuthService";
 import { useAppDispatch } from '../redux/hooks';
 import { setLoaderDisplayed, setLoaderNone } from '../redux/loaderSlice';
+import { storeToken } from '../redux/authSlice';
+import { ITokenInfo } from "../interfaces/ITokenInfo";
 
-export const Login = () => {
+
+export const Signin = () => {
+
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const loginFieldRef = useRef<HTMLInputElement>();
     const pwdFieldRef = useRef<HTMLInputElement>();
-    const [loginError, setLoginError] = useState(false);
-    const [loginDisabled, setLoginDisabled] = useState(true);
-    const [loginErrorMessage, setLoginErrorMessage] = useState("");
+    const [signinError, setSigninError] = useState(false);
+    const [signinDisabled, setSigninDisabled] = useState(true);
+    const [signinErrorMessage, setSigninErrorMessage] = useState("");
 
-    const login = async () => {
+    const processSignin = async () => {
         dispatch(setLoaderDisplayed());
         try {
             const loginResponse = await AuthService.login(
@@ -25,19 +29,14 @@ export const Login = () => {
                 pwdFieldRef.current?.value ?? ""
             );
             if (loginResponse.data != null) {
-                console.log(loginResponse.data);
-                console.log("accessToken=" + loginResponse.data.accessToken);
-                console.log("userName=" + loginResponse.data.userName);
-                console.log("validTo=" + loginResponse.data.validTo);
-                console.log("role=" + loginResponse.data.role);
-                setLoginError(false);
-
+                dispatch(storeToken(loginResponse.data as ITokenInfo));
+                setSigninError(false);
                 navigate("/employees", { replace: true });
                 console.log("Navigate to employee/list");
             } else {
-                setLoginError(true);
-                setLoginErrorMessage(loginResponse.error ?? "Login failed");
-                setLoginDisabled(true);
+                setSigninError(true);
+                setSigninErrorMessage(loginResponse.error ?? "Login failed");
+                setSigninDisabled(true);
             }
         } finally {
             dispatch(setLoaderNone());
@@ -46,11 +45,11 @@ export const Login = () => {
 
     const handleChange = (newValue: any | null) => {
         if (loginFieldRef.current?.value && pwdFieldRef.current?.value) {
-            if (loginError) {
-                setLoginError(false);
-                setLoginErrorMessage("");
+            if (signinError) {
+                setSigninError(false);
+                setSigninErrorMessage("");
             }
-            setLoginDisabled(false);
+            setSigninDisabled(false);
         }
     };
 
@@ -70,20 +69,20 @@ export const Login = () => {
                     alignItems: "center"
                 }}>
                     <TextField
-                        id="loginTextField"
+                        id="signinTextField"
                         style={{
                             margin: "10px"
                         }}
-                        error={loginError}
-                        label="Login name"
+                        error={signinError}
+                        label="Name"
                         variant="outlined"
                         inputRef={loginFieldRef}
-                        helperText={loginErrorMessage}
+                        helperText={signinErrorMessage}
                         onChange={handleChange}
                         onKeyUp={(e) => {
                             if (e.key === 'Enter') {
-                                if (loginFieldRef.current?.value && pwdFieldRef.current?.value && !loginError) {
-                                    login();
+                                if (loginFieldRef.current?.value && pwdFieldRef.current?.value && !signinError) {
+                                    processSignin();
                                 }
                             }
                         }}
@@ -98,24 +97,24 @@ export const Login = () => {
                         type="password"
                         variant="outlined"
                         inputRef={pwdFieldRef}
-                        error={loginError}
+                        error={signinError}
                         onChange={handleChange}
                         onKeyUp={(e) => {
                             if (e.key === 'Enter') {
-                                if (loginFieldRef.current?.value && pwdFieldRef.current?.value && !loginError) {
-                                    login();
+                                if (loginFieldRef.current?.value && pwdFieldRef.current?.value && !signinError) {
+                                    processSignin();
                                 }
                             }
                         }}
                     />
 
-                    <Button onClick={login} variant="outlined"
+                    <Button onClick={processSignin} variant="outlined"
                         size="large"
-                        disabled={loginDisabled}
+                        disabled={signinDisabled}
                         style={{
                             margin: "10px"
                         }}>
-                        Login
+                        Sign in
                     </Button>
                 </div>
             </Box>

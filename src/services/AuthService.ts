@@ -15,13 +15,6 @@ export class AuthService {
                 },
             });
 
-            console.log(response.data);
-
-            localStorage.setItem("accessToken", response.data.accessToken);
-            localStorage.setItem("userName", response.data.userName);
-            localStorage.setItem("role", response.data.role);
-            localStorage.setItem("validTo", response.data.validTo);
-
             return {
                 data: response.data,
                 error: null,
@@ -41,24 +34,7 @@ export class AuthService {
         }
     }
 
-    logout() {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("userName");
-        localStorage.removeItem("role");
-        localStorage.removeItem("validTo");
-    }
-
-    isAuth(): boolean {
-        if (localStorage.getItem("accessToken") && localStorage.getItem("validTo")) {
-            //console.log(`Valid to: ${localStorage.getItem("validTo")} now ${Date.now()}`)
-            //console.log(`Parse valid to: ${Date.parse(localStorage.getItem("validTo") ?? "")} now ${Date.now()}`)
-            return Date.parse(localStorage.getItem("validTo") ?? "") > Date.now();
-        }
-        return false;
-    }
-
-    authHeader(): any {
-        const token = localStorage.getItem("accessToken");
+    authHeader(token: string): any {
         if (token) {
             return { Authorization: "Bearer " + token };
         }
