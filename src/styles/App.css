@@ -9,6 +9,8 @@ a.navLink {
   text-transform: uppercase;
   color: white;
   margin-right: 20px;
+  top: 2px;
+  position: relative;
 }
 
 div.formBlock {
