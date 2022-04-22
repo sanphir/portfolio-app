@@ -24,15 +24,14 @@ export const Signin = () => {
     const processSignin = async () => {
         dispatch(setLoaderDisplayed());
         try {
-            const loginResponse = await AuthService.login(
+            const loginResponse = await AuthService.signin(
                 loginFieldRef.current?.value ?? "",
                 pwdFieldRef.current?.value ?? ""
             );
             if (loginResponse.data != null) {
-                dispatch(storeToken(loginResponse.data as ITokenInfo));
+                //dispatch(storeToken(loginResponse.data as ITokenInfo));                
                 setSigninError(false);
-                navigate("/employees", { replace: true });
-                console.log("Navigate to employee/list");
+                navigate("/employees", { replace: true });                
             } else {
                 setSigninError(true);
                 setSigninErrorMessage(loginResponse.error ?? "Login failed");

@@ -9,7 +9,8 @@ a.navLink {
   text-transform: uppercase;
   color: white;
   margin-right: 20px;
-  top: 2px;
+  top: 1px;
+  font-size: 14px;
   position: relative;
 }
 

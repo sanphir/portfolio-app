@@ -34,11 +34,10 @@ import {
     removeEmployee
 } from '../../redux/employeesSlice';
 import { setLoaderDisplayed, setLoaderNone } from '../../redux/loaderSlice';
-import { getTokenInfo } from '../../redux/authSlice';
+
 
 export default function EmployeesTable() {
     const rows = useAppSelector(selectEmployees);
-    const tokenInfo = useAppSelector(getTokenInfo);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
@@ -58,21 +57,24 @@ export default function EmployeesTable() {
     const handleDeleteEmployeeAlert = (event: unknown, dialogResult: DialogResult) => {
         setOpenDeleteEmployeeAlert(false);
         if (dialogResult == DialogResult.YES) {
-            //TO DO 
-            //add loader 
-
-            EmployeeService.removeEmployees([...selected], tokenInfo?.accessToken ?? "").then(resolve => {
-                console.log("Employees useEffect");
-                if (!resolve.error) {
-                    dispatch(removeEmployee([...selected]));
-                    setSelected([]);
-                    console.log('removeEmployees ok!');
-                } else {
-                    console.log('removeEmployees error: ' + resolve.error);
-                    //TO DO
-                    //add notificator with error
-                }
-            });
+            try {
+                dispatch(setLoaderDisplayed());
+                EmployeeService.removeEmployees([...selected]).then(resolve => {
+                    console.log("Employees useEffect");
+                    if (!resolve.error) {
+                        dispatch(removeEmployee([...selected]));
+                        setSelected([]);
+                        console.log('removeEmployees ok!');
+                    } else {
+                        console.log('removeEmployees error: ' + resolve.error);
+                        //TO DO
+                        //add notificator with error
+                    }
+                });
+            }
+            finally {
+                dispatch(setLoaderNone());
+            }
         }
         console.log("Selected records " + JSON.stringify(selected));
     };
@@ -149,10 +151,10 @@ export default function EmployeesTable() {
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
     useEffect(() => {
-        console.log("EmployeesTable useEffect");
+        //console.log("EmployeesTable useEffect");
         dispatch(setLoaderDisplayed());
         try {
-            dispatch(getEmployeesAsync(tokenInfo?.accessToken ?? ""));
+            dispatch(getEmployeesAsync());
         } finally {
             dispatch(setLoaderNone());
         }

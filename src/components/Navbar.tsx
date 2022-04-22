@@ -8,20 +8,24 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { clearToken, getTokenInfo } from '../redux/authSlice';
 import { isAuthenticated } from "../helpers/authChecker";
+import AuthService from "../services/AuthService";
 
 export const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const tokenInfo = useAppSelector(getTokenInfo);
-    const dispatch = useAppDispatch();
-    let isAuth = isAuthenticated(tokenInfo);
+    //const tokenInfo = useAppSelector(getTokenInfo);
+    const tokenInfo = AuthService.getTokenInfo();
+    //const dispatch = useAppDispatch();
+    //let isAuth = isAuthenticated(tokenInfo);
+    let isAuth = AuthService.isAuth();
 
     const siginClick = () => {
         navigate('signin');
     };
 
     const signoutClick = () => {
-        dispatch(clearToken());
+        //dispatch(clearToken());
+        AuthService.signout();
         navigate('signin')
     };
 
@@ -69,7 +73,7 @@ export const Navbar = () => {
                                 Employees
                             </Link>
                             <Button color="inherit" onClick={signoutClick}>
-                                {`Sign out(${localStorage.getItem("userName")})`}
+                                {`Sign out(${tokenInfo?.userName})`}
                             </Button>
                         </div>
                     )}

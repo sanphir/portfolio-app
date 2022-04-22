@@ -24,7 +24,7 @@ export const EmployeeForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const tokenInfo = useAppSelector(getTokenInfo);
+  //const tokenInfo = useAppSelector(getTokenInfo);
   const pwdFieldRef = React.useRef<HTMLInputElement>();
   const confirmPwdFieldRef = React.useRef<HTMLInputElement>();
   const employee: IEmployee = (location.state as IEmployee) ?? {};
@@ -66,7 +66,7 @@ export const EmployeeForm = () => {
       salary: salaryValue ?? employee.salary
     };
 
-    EmployeeService.updateEmployee(updatedEmployee, tokenInfo?.accessToken ?? "").then(resolve => {
+    EmployeeService.updateEmployee(updatedEmployee).then(resolve => {
       if (!resolve.error) {
         dispatch(updateEmployee(resolve.data ?? {} as IEmployee));
         console.log('updatedEmployees ok!');
@@ -88,7 +88,7 @@ export const EmployeeForm = () => {
       password: pwdFieldRef.current?.value ?? ""
     };
 
-    EmployeeService.addEmployee(newEmployee, tokenInfo?.accessToken ?? "").then(resolve => {
+    EmployeeService.addEmployee(newEmployee).then(resolve => {
       if (!resolve.error) {
         let responseEmployee = resolve.data ?? {} as IEmployee;
         dispatch(addEmployee(responseEmployee));
@@ -117,7 +117,7 @@ export const EmployeeForm = () => {
   React.useEffect(() => {
     console.log(`isNew=${isNew} employee=${employee} params.id=${params.id}`)
     if (!isNew && !(location.state as IEmployee) && params.id) {
-      EmployeeService.getEmployee(params.id ?? "", tokenInfo?.accessToken ?? "").then(resolve => {
+      EmployeeService.getEmployee(params.id ?? "").then(resolve => {
         if (!resolve.error) {
           console.log('getEmployee ok!');
           let getedEmployee = (resolve?.data as IEmployee);

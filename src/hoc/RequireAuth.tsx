@@ -1,7 +1,8 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAppSelector } from '../redux/hooks';
-import { getTokenInfo} from '../redux/authSlice';
-import { isAuthenticated } from "../helpers/authChecker";
+import { getTokenInfo } from '../redux/authSlice';
+//import { isAuthenticated } from "../helpers/authChecker";
+import AuthService from "../services/AuthService";
 
 export enum UserRole {
     Admin = "admin",
@@ -12,9 +13,11 @@ export enum UserRole {
 export function RequireAuth({ children, role }: { children: JSX.Element, role: UserRole }) {
     console.log(`RequireAuth=${role}`);
     let location = useLocation();
-    const tokenInfo = useAppSelector(getTokenInfo);    
+    //const tokenInfo = useAppSelector(getTokenInfo);
+    const tokenInfo = AuthService.getTokenInfo();
+    let isAuth = AuthService.isAuth();
 
-    if (!isAuthenticated(tokenInfo)) {
+    if (!isAuth) {
         console.log("not auth");
         // Redirect them to the /login page, but save the current location they were
         // trying to go to when they were redirected. This allows us to send them
