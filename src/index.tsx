@@ -8,7 +8,7 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Signin } from "./components/Signin";
 import { Home } from "./pages/Home";
 import EmployeesTable from "./components/EmployeesTable/EmployeesTable";
-import { EmployeeForm } from "./components/EmployeeForm";
+import { EmployeeForm } from "./components/EmployeeForm/EmployeeForm";
 import { Provider } from 'react-redux'
 import NotFound from "./pages/NotFound";
 import { RequireAuth, UserRole } from './hoc/RequireAuth';
