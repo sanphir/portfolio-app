@@ -20,6 +20,13 @@ interface EmployeeFormControlProps {
     onCancel: (e: any) => void;
 }
 
+interface ValidationErrors {
+    nameErorr: string | null,
+    emailError: string | null,
+    salaryError: string | null,
+    birtDateError: string | null
+}
+
 export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
     const { isNew, employee, onSave, onCancel } = props;
 
@@ -34,6 +41,14 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
     let lastModifiedDate = employee?.lastModifiedDate ? Date.parse(employee?.lastModifiedDate) : Date.now();
     const [createdDateValue, setCreatedDateValue] = React.useState<Date>(new Date(createdDate));
     const [lastModifiedDateValue, setLastModifiedDate] = React.useState<Date>(new Date(lastModifiedDate));
+
+    //state validation
+    const [errors, setErrors] = React.useState<ValidationErrors>({
+        nameErorr: null,
+        emailError: null,
+        salaryError: null,
+        birtDateError: null
+    });
 
     //ref
     const pwdFieldRef = React.useRef<HTMLInputElement>();
@@ -77,7 +92,51 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
     };
 
     const validate = (): boolean => {
-        return false;
+        let vErrors = validateName({ ...errors })
+        vErrors = validateEmail(vErrors);
+        vErrors = validateSalary(vErrors);
+
+        setErrors({ ...vErrors });
+        return !vErrors.nameErorr && !vErrors.emailError && !vErrors.salaryError && !vErrors.birtDateError;
+    }
+
+    const validateName = (vErrors: ValidationErrors): ValidationErrors => {
+        let result = vErrors;
+        if (!nameValue) {
+            vErrors.nameErorr = 'Required';
+        } else if (vErrors.nameErorr) {
+            vErrors.nameErorr = null;
+        }
+        console.log(`name errors${JSON.stringify(errors)}`);
+        return result;
+    }
+
+    const validateEmail = (vErrors: ValidationErrors): ValidationErrors => {
+        let result = vErrors;
+        if (!emailValue) {
+            result.emailError = 'Required';
+        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(emailValue)) {
+            result.emailError = 'Invalid email address';
+        } else if (errors.emailError) {
+            result.emailError = null;
+        }
+        console.log(`email errors${JSON.stringify(errors)}`);
+        return result;
+    }
+
+    const validateSalary = (vErrors: ValidationErrors): ValidationErrors => {
+        let result = vErrors;
+        if (!salaryValue) {
+            result.salaryError = 'Required';
+        } else {
+            if (Number(salaryValue) <= 0) {
+                result.salaryError = 'Value must be greater than zero';
+            } else {
+                result.salaryError = null;
+            }
+        }
+        console.log(`salary errors${JSON.stringify(errors)}`);
+        return result;
     }
 
     useEffect(() => {
@@ -108,11 +167,14 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
                         <div style={{ display: "flex", flexDirection: "row" }}>
                             <div className='formBlockChild'>
                                 <TextField
-                                    id="outlined-password-input"
+                                    id="outlined-name-input"
                                     required
                                     label="Name"
                                     value={nameValue}
                                     onChange={(event) => setNameValue(event.target.value)}
+                                    onBlur={(e) => setErrors(validateName({ ...errors }))}
+                                    helperText={errors?.nameErorr}
+                                    error={Boolean(errors?.nameErorr)}
                                     placeholder="Name"
                                 />
                                 <TextField
@@ -120,6 +182,9 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
                                     required
                                     value={emailValue}
                                     onChange={(event) => setEmailValue(event.target.value)}
+                                    onBlur={(e) => setErrors(validateEmail({ ...errors }))}
+                                    helperText={errors?.emailError}
+                                    error={Boolean(errors?.emailError)}
                                     label="Email"
                                 />
                             </div>
@@ -139,6 +204,9 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
                                     type="number"
                                     value={salaryValue}
                                     onChange={(event) => setSalaryValue(Number(event.target.value))}
+                                    onBlur={(e) => setErrors(validateSalary({ ...errors }))}
+                                    helperText={errors?.salaryError}
+                                    error={Boolean(errors?.salaryError)}
                                     InputProps={{
                                         startAdornment: <InputAdornment position="start">$</InputAdornment>
                                     }}
@@ -174,6 +242,7 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
                                             label="Confirme password"
                                             type="password"
                                             inputRef={confirmPwdFieldRef}
+                                        //helperText={errors?.confirmpassword?.message}
                                         //error={Boolean(errors?.confirmpassword)}
                                         />
                                     </div>
