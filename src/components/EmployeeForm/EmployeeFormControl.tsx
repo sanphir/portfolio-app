@@ -13,6 +13,8 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { IEmployee, INewEmployee, IUpdateEmployee } from '../../interfaces/IEmployee';
 
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from "yup";
 
 interface EmployeeFormControlProps {
     employee: IEmployee;
@@ -22,10 +24,31 @@ interface EmployeeFormControlProps {
 }
 
 interface IFormInputs {
+    isNew: boolean,
     nameField: string,
     emailField: string,
-    salaryField: number
+    salaryField: number,
+    passwordField: string,
+    confirmPasswordField: string
 }
+
+const schema = yup.object({
+    isNew: yup.boolean(),
+    nameField: yup.string().required("Name is required"),
+    emailField: yup.string().required("Email is rreqired").email("Invalid email"),
+    salaryField: yup.number().positive("Salary must be greater than zero").integer().required("Salary is required"),
+    passwordField: yup.string().when('isNew', {
+        is: true,
+        then: yup.string().required("Password is required"),
+        otherwise: yup.string().notRequired()
+    }),
+    confirmPasswordField: yup.string().when('isNew', {
+        is: true,
+        then: yup.string().required().oneOf([yup.ref('passwordField')], 'Passwords does not match'),
+        otherwise: yup.string().notRequired()
+    }),
+
+}).required();
 
 export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
     const { isNew, employee, onSave, onCancel } = props;
@@ -38,10 +61,6 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
     const [createdDateValue, setCreatedDateValue] = React.useState<Date>(new Date(createdDate));
     const [lastModifiedDateValue, setLastModifiedDate] = React.useState<Date>(new Date(lastModifiedDate));
 
-    //ref
-    const pwdFieldRef = React.useRef<HTMLInputElement>();
-    const confirmPwdFieldRef = React.useRef<HTMLInputElement>();
-
     // Specify date and time format using "style" options (i.e. full, long, medium, short)
     const dateFormater = new Intl.DateTimeFormat(window.navigator.language, { dateStyle: 'short', timeStyle: 'medium' });
 
@@ -53,9 +72,13 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
         setRoleValue(event.target.value as string);
     };
 
-    const { handleSubmit, control, reset, formState: { errors } } = useForm<IFormInputs>();
+    const { handleSubmit, control, reset, formState: { errors } } = useForm<IFormInputs>({
+        resolver: yupResolver(schema),
+        mode: 'onBlur'
+    });
     const onSubmit: SubmitHandler<IFormInputs> = (data) => {
         console.log(data);
+        return;
         if (isNew) {
             onSave({
                 name: data.nameField,
@@ -63,7 +86,7 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
                 role: roleValue,
                 birthDate: birthDateValue,
                 salary: data.salaryField,
-                password: pwdFieldRef.current?.value
+                password: data.passwordField
             } as INewEmployee);
         } else {
             onSave({
@@ -79,6 +102,7 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
 
     useEffect(() => {
         reset({
+            isNew: isNew,
             nameField: employee?.name ?? "",
             emailField: employee?.email ?? "",
             salaryField: employee?.salary ?? 0
@@ -110,7 +134,6 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
                                     name="nameField"
                                     control={control}
                                     defaultValue={employee.name}
-                                    rules={{ required: "Name is required" }}
                                     render={({ field }) =>
                                         <TextField
                                             required
@@ -124,10 +147,6 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
                                     name="emailField"
                                     control={control}
                                     defaultValue={employee.email}
-                                    rules={{
-                                        required: "Email is required",
-                                        pattern: { value: new RegExp(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i), message: "Invalid email" }
-                                    }}
                                     render={({ field }) =>
                                         <TextField
                                             required
@@ -151,7 +170,6 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
                                     name="salaryField"
                                     control={control}
                                     defaultValue={employee.salary}
-                                    rules={{ required: "Salary is required", min: { value: 1, message: "Salary must be greater than zero" } }}
                                     render={({ field }) =>
                                         <TextField
                                             required
@@ -184,19 +202,31 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
                             {isNew ?
                                 (
                                     <div className='formBlockChild'>
-                                        <TextField
-                                            id="outlined-password-input"
-                                            label="Password"
-                                            type="password"
-                                            inputRef={pwdFieldRef}
+                                        <Controller
+                                            name="passwordField"
+                                            control={control}
+                                            render={({ field }) =>
+                                                <TextField
+                                                    required
+                                                    type="password"
+                                                    label="Password"
+                                                    helperText={errors?.passwordField?.message}
+                                                    error={Boolean(errors?.passwordField)}
+                                                    placeholder="Password"
+                                                    {...field} />}
                                         />
-                                        <TextField
-                                            id="outlined-confirme-password-input"
-                                            label="Confirme password"
-                                            type="password"
-                                            inputRef={confirmPwdFieldRef}
-                                        //helperText={errors?.confirmpassword?.message}
-                                        //error={Boolean(errors?.confirmpassword)}
+                                        <Controller
+                                            name="confirmPasswordField"
+                                            control={control}
+                                            render={({ field }) =>
+                                                <TextField
+                                                    required
+                                                    type="password"
+                                                    label="Confirm password"
+                                                    helperText={errors?.confirmPasswordField?.message}
+                                                    error={Boolean(errors?.confirmPasswordField)}
+                                                    placeholder="Confirm password"
+                                                    {...field} />}
                                         />
                                     </div>
                                 )
