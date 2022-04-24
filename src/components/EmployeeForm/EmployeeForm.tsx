@@ -28,7 +28,9 @@ export const EmployeeForm = () => {
   const saveEmployee = (updatedEmployee: IUpdateEmployee) => {
     EmployeeService.updateEmployee(updatedEmployee).then(resolve => {
       if (!resolve.error) {
-        dispatch(updateEmployee(resolve.data ?? {} as IEmployee));
+        let savedEmployee = resolve?.data as IEmployee;
+        dispatch(updateEmployee(savedEmployee));
+        setEmployee(savedEmployee);
         console.log('updatedEmployees ok!');
       } else {
         console.log('updatedEmployees error: ' + resolve.error);
@@ -61,10 +63,6 @@ export const EmployeeForm = () => {
     }
   }
 
-  const cancel = (e: any) => {
-    navigate(-1);
-  }
-
   React.useEffect(() => {
     console.log(`Employee form euseEffect: isNew=${isNew} params.id=${params.id}`)
     if (!isNew && params.id) {
@@ -86,7 +84,6 @@ export const EmployeeForm = () => {
     <EmployeeFormControl
       employee={employee}
       isNew={isNew}
-      onCancel={cancel}
       onSave={save}
     />
   )

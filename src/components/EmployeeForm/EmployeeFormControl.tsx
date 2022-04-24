@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useNavigate } from "react-router-dom";
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from "@mui/material/Button";
@@ -20,7 +21,6 @@ interface EmployeeFormControlProps {
     employee: IEmployee;
     isNew: boolean;
     onSave: (employee: IUpdateEmployee | INewEmployee) => void;
-    onCancel: (e: any) => void;
 }
 
 interface IFormInputs {
@@ -51,7 +51,8 @@ const schema = yup.object({
 }).required();
 
 export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
-    const { isNew, employee, onSave, onCancel } = props;
+    const { isNew, employee, onSave } = props;
+    const navigate = useNavigate();
 
     const [roleValue, setRoleValue] = React.useState<string>(employee.role);
     let birthDate = employee?.birthDate ? Date.parse(employee?.birthDate) : Date.now();
@@ -72,13 +73,12 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
         setRoleValue(event.target.value as string);
     };
 
-    const { handleSubmit, control, reset, formState: { errors } } = useForm<IFormInputs>({
+    const { handleSubmit, control, reset, formState: { errors, isValid } } = useForm<IFormInputs>({
         resolver: yupResolver(schema),
         mode: 'onBlur'
     });
     const onSubmit: SubmitHandler<IFormInputs> = (data) => {
-        console.log(data);
-        return;
+        //console.log(data);
         if (isNew) {
             onSave({
                 name: data.nameField,
@@ -98,6 +98,15 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
                 salary: data.salaryField,
             } as IUpdateEmployee);
         }
+    }
+
+    const onCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
+        reset({
+            isNew: isNew,
+            nameField: employee?.name ?? "",
+            emailField: employee?.email ?? "",
+            salaryField: employee?.salary ?? 0
+        });
     }
 
     useEffect(() => {
@@ -253,6 +262,7 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
                             <Button variant="outlined"
                                 type='submit'
                                 size="large"
+                                disabled={!isValid}
                                 style={{
                                     margin: "10px"
                                 }}>
@@ -265,6 +275,14 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
                                     margin: "10px"
                                 }}>
                                 Cancel
+                            </Button>
+                            <Button variant="outlined"
+                                onClick={(e) => navigate(-1)}
+                                size="large"
+                                style={{
+                                    margin: "10px"
+                                }}>
+                                Back
                             </Button>
                         </div>
                     </div>
