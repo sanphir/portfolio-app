@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from "@mui/material/Button";
@@ -11,7 +11,8 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { IEmployee, INewEmployee, IUpdateEmployee } from '../../interfaces/IEmployee';
-import { CropLandscapeOutlined } from '@mui/icons-material';
+
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
 
 interface EmployeeFormControlProps {
     employee: IEmployee;
@@ -20,20 +21,15 @@ interface EmployeeFormControlProps {
     onCancel: (e: any) => void;
 }
 
-interface ValidationErrors {
-    nameErorr: string | null,
-    emailError: string | null,
-    salaryError: string | null,
-    birtDateError: string | null
+interface IFormInputs {
+    nameField: string,
+    emailField: string,
+    salaryField: number
 }
 
 export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
     const { isNew, employee, onSave, onCancel } = props;
 
-    //state values
-    const [nameValue, setNameValue] = React.useState<string>(employee.name);
-    const [emailValue, setEmailValue] = React.useState<string>(employee.email);
-    const [salaryValue, setSalaryValue] = React.useState<number>(employee.salary);
     const [roleValue, setRoleValue] = React.useState<string>(employee.role);
     let birthDate = employee?.birthDate ? Date.parse(employee?.birthDate) : Date.now();
     const [birthDateValue, setBirthDateValue] = React.useState<Date | null>(new Date(birthDate));
@@ -41,14 +37,6 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
     let lastModifiedDate = employee?.lastModifiedDate ? Date.parse(employee?.lastModifiedDate) : Date.now();
     const [createdDateValue, setCreatedDateValue] = React.useState<Date>(new Date(createdDate));
     const [lastModifiedDateValue, setLastModifiedDate] = React.useState<Date>(new Date(lastModifiedDate));
-
-    //state validation
-    const [errors, setErrors] = React.useState<ValidationErrors>({
-        nameErorr: null,
-        emailError: null,
-        salaryError: null,
-        birtDateError: null
-    });
 
     //ref
     const pwdFieldRef = React.useRef<HTMLInputElement>();
@@ -65,90 +53,42 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
         setRoleValue(event.target.value as string);
     };
 
-    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (!validate()) {
-            return;
-        }
+    const { handleSubmit, control, reset, formState: { errors } } = useForm<IFormInputs>();
+    const onSubmit: SubmitHandler<IFormInputs> = (data) => {
+        console.log(data);
         if (isNew) {
             onSave({
-                name: nameValue,
-                email: emailValue,
+                name: data.nameField,
+                email: data.emailField,
                 role: roleValue,
                 birthDate: birthDateValue,
-                salary: salaryValue,
+                salary: data.salaryField,
                 password: pwdFieldRef.current?.value
             } as INewEmployee);
         } else {
             onSave({
                 id: employee.id,
-                name: nameValue,
-                email: emailValue,
+                name: data.nameField,
+                email: data.emailField,
                 role: roleValue,
                 birthDate: birthDateValue,
-                salary: salaryValue
+                salary: data.salaryField,
             } as IUpdateEmployee);
         }
-    };
-
-    const validate = (): boolean => {
-        let vErrors = validateName({ ...errors })
-        vErrors = validateEmail(vErrors);
-        vErrors = validateSalary(vErrors);
-
-        setErrors({ ...vErrors });
-        return !vErrors.nameErorr && !vErrors.emailError && !vErrors.salaryError && !vErrors.birtDateError;
-    }
-
-    const validateName = (vErrors: ValidationErrors): ValidationErrors => {
-        let result = vErrors;
-        if (!nameValue) {
-            vErrors.nameErorr = 'Required';
-        } else if (vErrors.nameErorr) {
-            vErrors.nameErorr = null;
-        }
-        console.log(`name errors${JSON.stringify(errors)}`);
-        return result;
-    }
-
-    const validateEmail = (vErrors: ValidationErrors): ValidationErrors => {
-        let result = vErrors;
-        if (!emailValue) {
-            result.emailError = 'Required';
-        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(emailValue)) {
-            result.emailError = 'Invalid email address';
-        } else if (errors.emailError) {
-            result.emailError = null;
-        }
-        console.log(`email errors${JSON.stringify(errors)}`);
-        return result;
-    }
-
-    const validateSalary = (vErrors: ValidationErrors): ValidationErrors => {
-        let result = vErrors;
-        if (!salaryValue) {
-            result.salaryError = 'Required';
-        } else {
-            if (Number(salaryValue) <= 0) {
-                result.salaryError = 'Value must be greater than zero';
-            } else {
-                result.salaryError = null;
-            }
-        }
-        console.log(`salary errors${JSON.stringify(errors)}`);
-        return result;
     }
 
     useEffect(() => {
-        setNameValue(employee?.name ?? "");
-        setEmailValue(employee?.email ?? "");
-        setSalaryValue(employee?.salary ?? 0);
+        reset({
+            nameField: employee?.name ?? "",
+            emailField: employee?.email ?? "",
+            salaryField: employee?.salary ?? 0
+        });
         setRoleValue(employee?.role ?? "");
         setBirthDateValue(new Date(employee?.birthDate ? Date.parse(employee?.birthDate) : Date.now()));
         setCreatedDateValue(new Date(employee?.createdDate ? Date.parse(employee?.createdDate) : Date.now()));
         setLastModifiedDate(new Date(employee?.lastModifiedDate ? Date.parse(employee?.lastModifiedDate) : Date.now()));
         return () => { }
-    }, [employee]);
+    }, [employee, reset]);
 
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -159,33 +99,43 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
                     display: "block"
                 }}
                 noValidate
-                onSubmit={onSubmit}
+                onSubmit={handleSubmit(onSubmit)}
                 autoComplete="off"
             >
                 <div className='formBlock'>
                     <div>
                         <div style={{ display: "flex", flexDirection: "row" }}>
                             <div className='formBlockChild'>
-                                <TextField
-                                    id="outlined-name-input"
-                                    required
-                                    label="Name"
-                                    value={nameValue}
-                                    onChange={(event) => setNameValue(event.target.value)}
-                                    onBlur={(e) => setErrors(validateName({ ...errors }))}
-                                    helperText={errors?.nameErorr}
-                                    error={Boolean(errors?.nameErorr)}
-                                    placeholder="Name"
+                                <Controller
+                                    name="nameField"
+                                    control={control}
+                                    defaultValue={employee.name}
+                                    rules={{ required: "Name is required" }}
+                                    render={({ field }) =>
+                                        <TextField
+                                            required
+                                            label="Name"
+                                            helperText={errors?.nameField?.message}
+                                            error={Boolean(errors?.nameField)}
+                                            placeholder="Name"
+                                            {...field} />}
                                 />
-                                <TextField
-                                    id="outlined-email-input"
-                                    required
-                                    value={emailValue}
-                                    onChange={(event) => setEmailValue(event.target.value)}
-                                    onBlur={(e) => setErrors(validateEmail({ ...errors }))}
-                                    helperText={errors?.emailError}
-                                    error={Boolean(errors?.emailError)}
-                                    label="Email"
+                                <Controller
+                                    name="emailField"
+                                    control={control}
+                                    defaultValue={employee.email}
+                                    rules={{
+                                        required: "Email is required",
+                                        pattern: { value: new RegExp(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i), message: "Invalid email" }
+                                    }}
+                                    render={({ field }) =>
+                                        <TextField
+                                            required
+                                            label="Email"
+                                            helperText={errors.emailField?.message}
+                                            error={Boolean(errors?.emailField)}
+                                            placeholder="Name"
+                                            {...field} />}
                                 />
                             </div>
                             <div className='formBlockChild'>
@@ -197,20 +147,23 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
                                     onChange={handleBirthDateChange}
                                     renderInput={(params) => <TextField {...params} />}
                                 />
-                                <TextField
-                                    id="outlined-salary-input"
-                                    required
-                                    label="Salary"
-                                    type="number"
-                                    value={salaryValue}
-                                    onChange={(event) => setSalaryValue(Number(event.target.value))}
-                                    onBlur={(e) => setErrors(validateSalary({ ...errors }))}
-                                    helperText={errors?.salaryError}
-                                    error={Boolean(errors?.salaryError)}
-                                    InputProps={{
-                                        startAdornment: <InputAdornment position="start">$</InputAdornment>
-                                    }}
-                                    placeholder="Salary"
+                                <Controller
+                                    name="salaryField"
+                                    control={control}
+                                    defaultValue={employee.salary}
+                                    rules={{ required: "Salary is required", min: { value: 1, message: "Salary must be greater than zero" } }}
+                                    render={({ field }) =>
+                                        <TextField
+                                            required
+                                            label="Salary"
+                                            type="number"
+                                            helperText={errors?.salaryField?.message}
+                                            error={Boolean(errors?.salaryField)}
+                                            InputProps={{
+                                                startAdornment: <InputAdornment position="start">$</InputAdornment>
+                                            }}
+                                            placeholder="Salary"
+                                            {...field} />}
                                 />
                             </div>
                             <div className='formBlockChild' style={{ paddingTop: "8px" }}>
