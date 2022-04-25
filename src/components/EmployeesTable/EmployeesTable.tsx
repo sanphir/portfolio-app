@@ -82,7 +82,7 @@ export default function EmployeesTable() {
     const handleEditEmployee = (event: unknown) => {
         console.log('Edit employee click');
         console.log(`/employees/${selected[0]}`);
-        navigate(`/employees/${selected[0]}`, { replace: false, state: rows.find(r => r.id === selected[0]) });
+        navigate(`/employees/${selected[0]}`, { replace: false });
     }
 
     const handleNewEmployee = (event: unknown) => {
@@ -144,7 +144,8 @@ export default function EmployeesTable() {
     const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
     // Specify date and time format using "style" options (i.e. full, long, medium, short)
-    const dateFormater = new Intl.DateTimeFormat(window.navigator.language, { dateStyle: 'short', timeStyle: 'medium' });
+    const language = window.navigator.language;
+    //const dateFormater = new Intl.DateTimeFormat(window.navigator.language, { dateStyle: 'short', timeStyle: 'medium' });    
 
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
@@ -240,10 +241,10 @@ export default function EmployeesTable() {
 
                                             <TableCell align="left">{row.email}</TableCell>
                                             <TableCell align="left">{row.role}</TableCell>
-                                            <TableCell align="left">{dateFormater.format(Date.parse(row.birthDate.toString()))}</TableCell>
+                                            <TableCell align="left">{new Date(row?.birthDate).toLocaleString(language)}</TableCell>
                                             <TableCell align="right">{row.salary}</TableCell>
-                                            <TableCell align="left">{dateFormater.format(Date.parse(row.createdDate.toString()))}</TableCell>
-                                            <TableCell align="left">{dateFormater.format(Date.parse(row.lastModifiedDate.toString()))}</TableCell>
+                                            <TableCell align="left">{new Date(row?.createdDate).toLocaleString(language)}</TableCell>
+                                            <TableCell align="left">{new Date(row?.lastModifiedDate).toLocaleString(language)}</TableCell>
                                         </TableRow>
                                     );
                                 })}

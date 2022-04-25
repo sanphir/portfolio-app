@@ -31,7 +31,8 @@ export const EmployeeForm = () => {
         let savedEmployee = resolve?.data as IEmployee;
         dispatch(updateEmployee(savedEmployee));
         setEmployee(savedEmployee);
-        console.log('updatedEmployees ok!');
+        console.log(`updatedEmployees ok! ${JSON.stringify(savedEmployee)}`);
+        //console.log('updatedEmployees ok!');
       } else {
         console.log('updatedEmployees error: ' + resolve.error);
         //TO DO
@@ -64,11 +65,12 @@ export const EmployeeForm = () => {
   }
 
   React.useEffect(() => {
-    console.log(`Employee form euseEffect: isNew=${isNew} params.id=${params.id}`)
+    console.log(`Employee form useEffect: isNew=${isNew} params.id=${params.id}`)
     if (!isNew && params.id) {
       EmployeeService.getEmployee(params.id ?? "").then(resolve => {
         if (!resolve.error) {
-          console.log('getEmployee ok!');
+          //console.log('getEmployee ok!');
+          console.log(`getEmployee ok! ${JSON.stringify(resolve?.data )}`);
           setEmployee(resolve?.data as IEmployee);
         } else {
           console.log('getEmployee error: ' + resolve.error);

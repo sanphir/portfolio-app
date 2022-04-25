@@ -55,15 +55,12 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
     const navigate = useNavigate();
 
     const [roleValue, setRoleValue] = React.useState<string>(employee.role);
-    let birthDate = employee?.birthDate ? Date.parse(employee?.birthDate) : Date.now();
-    const [birthDateValue, setBirthDateValue] = React.useState<Date | null>(new Date(birthDate));
-    let createdDate = employee?.createdDate ? Date.parse(employee?.createdDate) : Date.now();
-    let lastModifiedDate = employee?.lastModifiedDate ? Date.parse(employee?.lastModifiedDate) : Date.now();
-    const [createdDateValue, setCreatedDateValue] = React.useState<Date>(new Date(createdDate));
-    const [lastModifiedDateValue, setLastModifiedDate] = React.useState<Date>(new Date(lastModifiedDate));
 
     // Specify date and time format using "style" options (i.e. full, long, medium, short)
-    const dateFormater = new Intl.DateTimeFormat(window.navigator.language, { dateStyle: 'short', timeStyle: 'medium' });
+    const language = window.navigator.language;
+    const [birthDateValue, setBirthDateValue] = React.useState<Date | null>(employee?.birthDate ? new Date(employee?.birthDate) : new Date());
+    const [createdDateValue, setCreatedDateValue] = React.useState<string>(employee?.createdDate ? new Date(employee?.createdDate).toLocaleString(language) : "");
+    const [lastModifiedDateValue, setLastModifiedDate] = React.useState<string>(employee?.lastModifiedDate ? new Date(employee?.lastModifiedDate).toLocaleString(language) : "");
 
     const handleBirthDateChange = (newValue: Date | null) => {
         setBirthDateValue(newValue);
@@ -117,9 +114,9 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
             salaryField: employee?.salary ?? 0
         });
         setRoleValue(employee?.role ?? "");
-        setBirthDateValue(new Date(employee?.birthDate ? Date.parse(employee?.birthDate) : Date.now()));
-        setCreatedDateValue(new Date(employee?.createdDate ? Date.parse(employee?.createdDate) : Date.now()));
-        setLastModifiedDate(new Date(employee?.lastModifiedDate ? Date.parse(employee?.lastModifiedDate) : Date.now()));
+        setBirthDateValue(employee?.birthDate ? new Date(employee?.birthDate) : new Date());
+        setCreatedDateValue(employee?.createdDate ? new Date(employee?.createdDate).toLocaleString(language) : "");
+        setLastModifiedDate(employee?.lastModifiedDate ? new Date(employee?.lastModifiedDate).toLocaleString(language) : "");
         return () => { }
     }, [employee, reset]);
 
@@ -246,13 +243,13 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
                                             id="outlined-createdDate-input"
                                             label="Created date"
                                             disabled
-                                            value={dateFormater.format(createdDateValue)}
+                                            value={createdDateValue}
                                         />
                                         <TextField
                                             id="outlined-modifiedDate-input"
                                             label="Last modified date"
                                             disabled
-                                            value={dateFormater.format(lastModifiedDateValue)}
+                                            value={lastModifiedDateValue}
                                         />
 
                                     </div>
