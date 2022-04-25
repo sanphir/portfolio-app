@@ -1,10 +1,11 @@
 import "./styles/App.css";
-import { useState } from "react";
+import 'react-toastify/dist/ReactToastify.css'
 import { Outlet } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
 import Loader from "./components/Loader";
-import { useAppSelector, useAppDispatch } from './redux/hooks';
+import { useAppSelector } from './redux/hooks';
 import { getLoaderDisplayed } from "./redux/loaderSlice";
+import { ToastContainer } from 'react-toastify';
 
 function App() {
 
@@ -14,6 +15,17 @@ function App() {
       <Loader isDisplayed={loaderDisplayed} />
       <Navbar />
       <Outlet />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 }

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch } from '../../redux/hooks';
 import { addEmployee, updateEmployee } from '../../redux/employeesSlice';
-
+import { toast } from 'react-toastify';
 import { IEmployee, IUpdateEmployee, INewEmployee } from '../../interfaces/IEmployee';
 import EmployeeService from '../../services/EmployeeService';
 import { EmployeeFormControl } from './EmployeeFormControl';
@@ -31,12 +31,9 @@ export const EmployeeForm = () => {
         let savedEmployee = resolve?.data as IEmployee;
         dispatch(updateEmployee(savedEmployee));
         setEmployee(savedEmployee);
-        console.log(`updatedEmployees ok! ${JSON.stringify(savedEmployee)}`);
-        //console.log('updatedEmployees ok!');
+        toast.success('Employee saved!');
       } else {
-        console.log('updatedEmployees error: ' + resolve.error);
-        //TO DO
-        //add notificator with error
+        toast.error(`Save error: ${resolve.error}`);
       }
     });
   }
@@ -47,11 +44,9 @@ export const EmployeeForm = () => {
         let responseEmployee = resolve.data ?? {} as IEmployee;
         dispatch(addEmployee(responseEmployee));
         navigate(`/employees/${responseEmployee.id}`, { replace: true });
-        console.log('newEmployees ok!');
+        toast.success('Employee saved!');
       } else {
-        console.log('newEmployees error: ' + resolve.error);
-        //TO DO
-        //add notificator with error
+        toast.error(`Save error: ${resolve.error}`);
       }
     });
   }
@@ -69,13 +64,9 @@ export const EmployeeForm = () => {
     if (!isNew && params.id) {
       EmployeeService.getEmployee(params.id ?? "").then(resolve => {
         if (!resolve.error) {
-          //console.log('getEmployee ok!');
-          console.log(`getEmployee ok! ${JSON.stringify(resolve?.data )}`);
           setEmployee(resolve?.data as IEmployee);
         } else {
-          console.log('getEmployee error: ' + resolve.error);
-          //TO DO
-          //add notificator with error
+          toast.success(`Error geting employee: ${resolve.error}`);
         }
       });
     }

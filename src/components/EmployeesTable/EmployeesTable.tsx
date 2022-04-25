@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-
+import { toast } from 'react-toastify';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -60,15 +60,12 @@ export default function EmployeesTable() {
             try {
                 dispatch(setLoaderDisplayed());
                 EmployeeService.removeEmployees([...selected]).then(resolve => {
-                    console.log("Employees useEffect");
                     if (!resolve.error) {
                         dispatch(removeEmployee([...selected]));
                         setSelected([]);
-                        console.log('removeEmployees ok!');
+                        toast.success('Employee deleted');
                     } else {
-                        console.log('removeEmployees error: ' + resolve.error);
-                        //TO DO
-                        //add notificator with error
+                        toast.error(`Delete employee error: ${resolve.error}`);
                     }
                 });
             }
@@ -76,17 +73,13 @@ export default function EmployeesTable() {
                 dispatch(setLoaderNone());
             }
         }
-        console.log("Selected records " + JSON.stringify(selected));
     };
 
     const handleEditEmployee = (event: unknown) => {
-        console.log('Edit employee click');
-        console.log(`/employees/${selected[0]}`);
         navigate(`/employees/${selected[0]}`, { replace: false });
     }
 
     const handleNewEmployee = (event: unknown) => {
-        console.log('New employee click');
         navigate('/employees/new', { replace: false });
     }
 
@@ -152,7 +145,7 @@ export default function EmployeesTable() {
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
     useEffect(() => {
-        //console.log("EmployeesTable useEffect");
+        console.log("EmployeesTable useEffect");
         dispatch(setLoaderDisplayed());
         try {
             dispatch(getEmployeesAsync());

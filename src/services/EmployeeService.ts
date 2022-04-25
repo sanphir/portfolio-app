@@ -89,13 +89,20 @@ export class EmployeeService {
 
         try {
             const response = await axios.post(`${API_URL}api/Employee/add`, employee, { headers: AuthService.authHeader() });
-
             return {
                 data: response.data as IEmployee,
                 error: null,
             };
+
         } catch (error) {
-            console.log(`addEmployee error: ${JSON.stringify(error)}`);
+            return this.getErrorResposne(error);
+            let errorMessage = (error as any)?.response?.data;
+            if (errorMessage) {
+                return {
+                    data: null,
+                    error: errorMessage
+                }
+            }
             if (axios.isAxiosError(error)) {
                 return {
                     data: null,
@@ -136,6 +143,27 @@ export class EmployeeService {
                     error: (<Error>error).message,
                 };
             }
+        }
+    }
+
+    getErrorResposne(error: any): any {
+        let errorMessage = error?.response?.data;
+        if (errorMessage) {
+            return {
+                data: null,
+                error: errorMessage
+            }
+        }
+        if (axios.isAxiosError(error)) {
+            return {
+                data: null,
+                error: (<AxiosError>error).response?.data?.errorText ?? (<AxiosError>error).message,
+            };
+        } else {
+            return {
+                data: null,
+                error: (<Error>error).message,
+            };
         }
     }
 }
