@@ -13,7 +13,7 @@ export const EmployeeForm = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const isNew = (location.pathname?.indexOf("/employees/new") ?? -1) >= 0;
+  let isNew = (location.pathname?.indexOf("/employees/new") ?? -1) >= 0;
 
   const [employee, setEmployee] = React.useState<IEmployee>({
     name: "",
@@ -45,7 +45,7 @@ export const EmployeeForm = () => {
       if (!resolve.error) {
         let responseEmployee = resolve.data ?? {} as IEmployee;
         dispatch(addEmployee(responseEmployee));
-        navigate(`/employees/${responseEmployee.id}`, { replace: true, state: responseEmployee });
+        navigate(`/employees/${responseEmployee.id}`, { replace: true });
         console.log('newEmployees ok!');
       } else {
         console.log('newEmployees error: ' + resolve.error);
@@ -78,7 +78,7 @@ export const EmployeeForm = () => {
       });
     }
     return () => { }
-  }, []);
+  }, [isNew]);
 
   return (
     <EmployeeFormControl
