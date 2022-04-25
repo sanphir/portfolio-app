@@ -25,6 +25,7 @@ import { EmployeesTableHead } from './EmployeesTableHead';
 import { DialogResult, Order, getComparator, stableSort } from './EmployeesTableCommon';
 import { IEmployee } from '../../interfaces/IEmployee';
 import EmployeeService from '../../services/EmployeeService';
+import AuthService from "../../services/AuthService";
 
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import {
@@ -48,9 +49,16 @@ export default function EmployeesTable() {
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
+    const tokenInfo = AuthService.getTokenInfo();
+
     const [openDeleteEmployeeAlert, setOpenDeleteEmployeeAlert] = React.useState(false);
 
     const handleDeleteEmployee = (event: unknown) => {
+        let current = rows.find(r => r.name == tokenInfo?.userName);
+        if (current && selected.includes(current.id)) {
+            toast.warning("You can't delete self!");
+            return;
+        }
         setOpenDeleteEmployeeAlert(true);
     }
 
