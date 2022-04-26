@@ -8,9 +8,7 @@ a.navLink {
   text-decoration: none;
   text-transform: uppercase;
   color: white;
-  margin-right: 20px;
-  top: 1px;
-  font-size: 14px;
+  margin-right: 20px;  
   position: relative;
 }
 

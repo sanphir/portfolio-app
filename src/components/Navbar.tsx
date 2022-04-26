@@ -1,22 +1,16 @@
 import "../styles/App.css";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import { clearToken, getTokenInfo } from '../redux/authSlice';
-import { isAuthenticated } from "../helpers/authChecker";
 import AuthService from "../services/AuthService";
 
 export const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    //const tokenInfo = useAppSelector(getTokenInfo);
     const tokenInfo = AuthService.getTokenInfo();
-    //const dispatch = useAppDispatch();
-    //let isAuth = isAuthenticated(tokenInfo);
     let isAuth = AuthService.isAuth();
 
     const siginClick = () => {

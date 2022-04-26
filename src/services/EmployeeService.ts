@@ -1,5 +1,4 @@
 import axios, { AxiosError } from "axios";
-import { Nullable } from "../interfaces/Common";
 import { ICommonResponse } from "../interfaces/ICommonResponse";
 import { IEmployee, IUpdateEmployee, INewEmployee } from "../interfaces/IEmployee";
 import AuthService from "./AuthService";
@@ -17,18 +16,7 @@ export class EmployeeService {
                 error: null,
             };
         } catch (error) {
-            console.log(`getEmployees error: ${JSON.stringify(error)}`);
-            if (axios.isAxiosError(error)) {
-                return {
-                    data: null,
-                    error: (<AxiosError>error).response?.data?.errorText ?? (<AxiosError>error).message,
-                };
-            } else {
-                return {
-                    data: null,
-                    error: (<Error>error).message,
-                };
-            }
+            return this.getErrorResposne(error);
         }
     }
 
@@ -43,18 +31,7 @@ export class EmployeeService {
                 error: null,
             };
         } catch (error) {
-            console.log(`getEmployee error: ${JSON.stringify(error)}`);
-            if (axios.isAxiosError(error)) {
-                return {
-                    data: null,
-                    error: (<AxiosError>error).response?.data?.errorText ?? (<AxiosError>error).message,
-                };
-            } else {
-                return {
-                    data: null,
-                    error: (<Error>error).message,
-                };
-            }
+            return this.getErrorResposne(error);
         }
     }
 
@@ -69,18 +46,7 @@ export class EmployeeService {
                 error: null,
             };
         } catch (error) {
-            console.log(`updateEmployee error: ${JSON.stringify(error)}`);
-            if (axios.isAxiosError(error)) {
-                return {
-                    data: null,
-                    error: (<AxiosError>error).response?.data?.errorText ?? (<AxiosError>error).message,
-                };
-            } else {
-                return {
-                    data: null,
-                    error: (<Error>error).message,
-                };
-            }
+            return this.getErrorResposne(error);
         }
     }
 
@@ -96,24 +62,6 @@ export class EmployeeService {
 
         } catch (error) {
             return this.getErrorResposne(error);
-            let errorMessage = (error as any)?.response?.data;
-            if (errorMessage) {
-                return {
-                    data: null,
-                    error: errorMessage
-                }
-            }
-            if (axios.isAxiosError(error)) {
-                return {
-                    data: null,
-                    error: (<AxiosError>error).response?.data?.errorText ?? (<AxiosError>error).message,
-                };
-            } else {
-                return {
-                    data: null,
-                    error: (<Error>error).message,
-                };
-            }
         }
     }
 
@@ -131,18 +79,7 @@ export class EmployeeService {
                 error: null,
             };
         } catch (error) {
-            console.log(`removeEmployees error: ${JSON.stringify(error)}`);
-            if (axios.isAxiosError(error)) {
-                return {
-                    data: null,
-                    error: (<AxiosError>error).response?.data?.errorText ?? (<AxiosError>error).message,
-                };
-            } else {
-                return {
-                    data: null,
-                    error: (<Error>error).message,
-                };
-            }
+            return this.getErrorResposne(error);
         }
     }
 

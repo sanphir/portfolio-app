@@ -95,7 +95,7 @@ export const EmployeesTableHead = (props: EmployeesTableHeadProps) => {
                 {headCells.map((headCell) => (
                     <TableCell
                         key={headCell.id}
-                        sx={{ fontWeight: "bold" }}                        
+                        sx={{ fontWeight: "bold" }}
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
                         sortDirection={orderBy === headCell.id ? order : false}
