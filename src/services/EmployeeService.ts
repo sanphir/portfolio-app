@@ -1,9 +1,8 @@
 import axios, { AxiosError } from "axios";
 import { ICommonResponse } from "../interfaces/ICommonResponse";
 import { IEmployee, IUpdateEmployee, INewEmployee } from "../interfaces/IEmployee";
+import { API_URL } from "../config";
 import AuthService from "./AuthService";
-
-const API_URL = "https://localhost:7039/";
 
 export class EmployeeService {
     async getEmployees(): Promise<ICommonResponse<IEmployee[]>> {

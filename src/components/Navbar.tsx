@@ -17,14 +17,13 @@ export const Navbar = () => {
         navigate('signin');
     };
 
-    const signoutClick = () => {
-        //dispatch(clearToken());
+    const signoutClick = () => {        
         AuthService.signout();
         navigate('signin')
     };
 
     const pageName = (): string => {
-        console.log(location);
+        //console.log(location);
         if (location.pathname) {
             if (location.pathname.indexOf("/employees/") >= 0 && location.pathname.indexOf("/employees/new") < 0) {
                 return "Employee page";

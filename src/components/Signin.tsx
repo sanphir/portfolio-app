@@ -7,9 +7,7 @@ import Button from "@mui/material/Button";
 import AuthService from "../services/AuthService";
 import { useAppDispatch } from '../redux/hooks';
 import { setLoaderDisplayed, setLoaderNone } from '../redux/loaderSlice';
-import { storeToken } from '../redux/authSlice';
-import { ITokenInfo } from "../interfaces/ITokenInfo";
-
+import { toast } from 'react-toastify';
 
 export const Signin = () => {
 
@@ -18,10 +16,9 @@ export const Signin = () => {
     const loginFieldRef = useRef<HTMLInputElement>();
     const pwdFieldRef = useRef<HTMLInputElement>();
     const [signinError, setSigninError] = useState(false);
-    const [signinDisabled, setSigninDisabled] = useState(true);
     const [signinErrorMessage, setSigninErrorMessage] = useState("");
 
-    const processSignin = async () => {
+    const processSignin = async () => {        
         dispatch(setLoaderDisplayed());
         try {
             const loginResponse = await AuthService.signin(
@@ -29,13 +26,12 @@ export const Signin = () => {
                 pwdFieldRef.current?.value ?? ""
             );
             if (loginResponse.data != null) {
-                //dispatch(storeToken(loginResponse.data as ITokenInfo));                
                 setSigninError(false);
-                navigate("/employees", { replace: true });                
+                navigate("/employees", { replace: true });
             } else {
+                toast.error(loginResponse.error ?? "Login failed");
                 setSigninError(true);
                 setSigninErrorMessage(loginResponse.error ?? "Login failed");
-                setSigninDisabled(true);
             }
         } finally {
             dispatch(setLoaderNone());
@@ -48,7 +44,6 @@ export const Signin = () => {
                 setSigninError(false);
                 setSigninErrorMessage("");
             }
-            setSigninDisabled(false);
         }
     };
 
@@ -109,7 +104,7 @@ export const Signin = () => {
 
                     <Button onClick={processSignin} variant="outlined"
                         size="large"
-                        disabled={signinDisabled}
+                        disabled={Boolean(signinError)}
                         style={{
                             margin: "10px"
                         }}>

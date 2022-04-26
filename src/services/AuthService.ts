@@ -2,9 +2,9 @@ import axios, { AxiosError } from "axios";
 import { Nullable } from "../interfaces/Common";
 import { ICommonResponse } from "../interfaces/ICommonResponse";
 import { ITokenInfo } from "../interfaces/ITokenInfo";
+import { API_URL } from "../config";
 
-const API_URL = "https://localhost:7039/";
-const TOKEN_URL = API_URL + "token";
+const TOKEN_URL = `${API_URL}token`;
 
 export class AuthService {
     async signin(username: string, password: string): Promise<ICommonResponse<ITokenInfo>> {
@@ -43,7 +43,6 @@ export class AuthService {
 
     getTokenInfo(): Nullable<ITokenInfo> {
         let storedTokenInfo = localStorage.getItem("tokenInfo")
-        //console.log(`storedTokenInfo=${storedTokenInfo}`);
         if (storedTokenInfo) {
             return <ITokenInfo>JSON.parse(storedTokenInfo);
         }
