@@ -28,6 +28,7 @@ interface IFormInputs {
     nameField: string,
     emailField: string,
     salaryField: number,
+    birthDateField: Date;
     passwordField: string,
     confirmPasswordField: string
 }
@@ -37,6 +38,8 @@ const schema = yup.object({
     nameField: yup.string().required("Name is required"),
     emailField: yup.string().required("Email is rreqired").email("Invalid email"),
     salaryField: yup.number().positive("Salary must be greater than zero").integer().required("Salary is required"),
+    birthDateField: yup.date().required("Date of Birth is required").test("birthDateField", "must be over 18 years of age",
+        (date) => new Date().getFullYear() - (date as Date)?.getFullYear() >= 18),
     passwordField: yup.string().when('isNew', {
         is: true,
         then: yup.string().required("Password is required"),
@@ -56,15 +59,12 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
 
     const [roleValue, setRoleValue] = React.useState<string>(employee.role);
 
-    // Specify date and time format using "style" options (i.e. full, long, medium, short)
     const language = window.navigator.language;
-    const [birthDateValue, setBirthDateValue] = React.useState<Date | null>(employee?.birthDate ? new Date(employee?.birthDate) : new Date());
     const [createdDateValue, setCreatedDateValue] = React.useState<string>(employee?.createdDate ? new Date(employee?.createdDate).toLocaleString(language) : "");
-    const [lastModifiedDateValue, setLastModifiedDate] = React.useState<string>(employee?.lastModifiedDate ? new Date(employee?.lastModifiedDate).toLocaleString(language) : "");
+    const [lastModifiedDateValue, setLastModifiedDate] = React.useState<string>(employee?.lastModifiedDate ? new Date(employee?.lastModifiedDate).toLocaleString(language) : "")
 
-    const handleBirthDateChange = (newValue: Date | null) => {
-        setBirthDateValue(newValue);
-    };
+    const now = new Date();
+    const maxBirthDate = new Date(now.getFullYear() - 18, now.getMonth(), now.getDay());
 
     const handleRoleChange = (event: SelectChangeEvent) => {
         setRoleValue(event.target.value as string);
@@ -81,7 +81,7 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
                 name: data.nameField,
                 email: data.emailField,
                 role: roleValue,
-                birthDate: birthDateValue,
+                birthDate: data.birthDateField,
                 salary: data.salaryField,
                 password: data.passwordField
             } as INewEmployee);
@@ -91,7 +91,7 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
                 name: data.nameField,
                 email: data.emailField,
                 role: roleValue,
-                birthDate: birthDateValue,
+                birthDate: data.birthDateField,
                 salary: data.salaryField,
             } as IUpdateEmployee);
         }
@@ -102,7 +102,8 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
             isNew: isNew,
             nameField: employee?.name ?? "",
             emailField: employee?.email ?? "",
-            salaryField: employee?.salary ?? 0
+            salaryField: employee?.salary ?? 0,
+            birthDateField: new Date(employee?.birthDate)
         });
     }
 
@@ -111,10 +112,10 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
             isNew: isNew,
             nameField: employee?.name ?? "",
             emailField: employee?.email ?? "",
-            salaryField: employee?.salary ?? 0
+            salaryField: employee?.salary ?? 0,
+            birthDateField: new Date(employee?.birthDate)
         });
         setRoleValue(employee?.role ?? "");
-        setBirthDateValue(employee?.birthDate ? new Date(employee?.birthDate) : new Date());
         setCreatedDateValue(employee?.createdDate ? new Date(employee?.createdDate).toLocaleString(language) : "");
         setLastModifiedDate(employee?.lastModifiedDate ? new Date(employee?.lastModifiedDate).toLocaleString(language) : "");
         return () => { }
@@ -164,14 +165,26 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
                                 />
                             </div>
                             <div className='formBlockChild'>
-                                <DesktopDatePicker
-                                    label="Birth date *"
-                                    inputFormat="MM/dd/yyyy"
-                                    clearable
-                                    value={birthDateValue}
-                                    onChange={handleBirthDateChange}
-                                    renderInput={(params) => <TextField {...params} />}
+                                <Controller
+                                    control={control}
+                                    name="birthDateField"
+                                    defaultValue={new Date(employee.birthDate)}
+                                    render={({ field: { onChange, onBlur, value, ref } }) => (
+                                        <DesktopDatePicker
+                                            label="Birth date *"
+                                            inputFormat="dd/MM/yyyy"
+                                            maxDate={maxBirthDate}
+                                            onChange={onChange}
+                                            value={value}
+                                            renderInput={(params) => <TextField
+                                                onBlur={onBlur}
+                                                error={Boolean(errors?.birthDateField)}
+                                                helperText={errors?.birthDateField?.message}
+                                                {...params} />}
+                                        />
+                                    )}
                                 />
+
                                 <Controller
                                     name="salaryField"
                                     control={control}
