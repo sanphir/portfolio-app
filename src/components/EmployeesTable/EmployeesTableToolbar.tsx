@@ -56,6 +56,7 @@ export const EmployeesTableToolbar = (props: EmployeesTableToolbarProps) => {
             <Box sx={{
                 display: 'flex', flex: '1 1 100%',
                 position: 'relative',
+                top: '-6px',
                 alignItems: 'flex-end', paddingLeft: '10px', paddingRight: '10px'
             }}>
                 <TextField id="input-with-sx" label="Searche email or name"
