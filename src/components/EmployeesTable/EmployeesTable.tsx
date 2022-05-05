@@ -32,7 +32,8 @@ import {
     getEmployeesAsync,
     setEmployees,
     selectEmployees,
-    removeEmployee
+    removeEmployee,
+    filterEmployeesByNameOrEmail
 } from '../../redux/employeesSlice';
 import { setLoaderDisplayed, setLoaderNone } from '../../redux/loaderSlice';
 
@@ -89,6 +90,10 @@ export default function EmployeesTable() {
 
     const handleNewEmployee = (event: unknown) => {
         navigate('/employees/new', { replace: false });
+    }
+
+    const handleSearcheChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        dispatch(filterEmployeesByNameOrEmail(event?.target?.value ?? null));
     }
 
     const handleRequestSort = (
@@ -187,7 +192,11 @@ export default function EmployeesTable() {
                         </Button>
                     </DialogActions>
                 </Dialog>
-                <EmployeesTableToolbar numSelected={selected.length} onDeleteEmployee={handleDeleteEmployee} onEditEmployee={handleEditEmployee} onNewEmployee={handleNewEmployee} />
+                <EmployeesTableToolbar numSelected={selected.length}
+                    onDeleteEmployee={handleDeleteEmployee}
+                    onEditEmployee={handleEditEmployee}
+                    onNewEmployee={handleNewEmployee}
+                    onSearcheChanged={handleSearcheChanged} />
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 750 }}

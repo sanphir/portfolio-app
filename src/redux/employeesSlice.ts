@@ -11,11 +11,13 @@ export enum SliceStatus {
 
 export interface EmployeesState {
     value: IEmployee[];
+    filtredValues: IEmployee[];
     status: SliceStatus;
 }
 
 const initialState: EmployeesState = {
     value: [],
+    filtredValues: [],
     status: SliceStatus.IDLE,
 };
 
@@ -41,19 +43,31 @@ export const employeesSlice = createSlice({
         // Use the PayloadAction type to declare the contents of `action.payload`
         setEmployees: (state, action: PayloadAction<IEmployee[]>) => {
             state.value = action.payload;
+            state.filtredValues = [...state.value];
         },
 
         addEmployee: (state, action: PayloadAction<IEmployee>) => {
             state.value = [...state.value, action.payload];
+            state.filtredValues = [...state.value];
         },
 
         updateEmployee: (state, action: PayloadAction<IEmployee>) => {
             var empIdx = state.value.findIndex(e => e.id == action.payload.id);
             state.value[empIdx] = action.payload;
+            state.filtredValues = [...state.value];
         },
 
         removeEmployee: (state, action: PayloadAction<string[]>) => {
             state.value = state.value.filter(e => !action.payload.includes(e.id));
+            state.filtredValues = [...state.value];
+        },
+
+        filterEmployeesByNameOrEmail: (state, action: PayloadAction<string>) => {
+            if (action?.payload ?? null) {
+                state.filtredValues = [...state.value.filter(e => e.email.indexOf(action.payload) >= 0 || e.name.indexOf(action.payload) >= 0)];
+            } else {
+                state.filtredValues = [...state.value];
+            }
         },
     },
     // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -66,15 +80,16 @@ export const employeesSlice = createSlice({
             .addCase(getEmployeesAsync.fulfilled, (state, action) => {
                 state.status = SliceStatus.IDLE;
                 state.value = action.payload ?? [];
+                state.filtredValues = action.payload ?? [];
             });
     },
 });
 
-export const { setEmployees, addEmployee, removeEmployee, updateEmployee } = employeesSlice.actions;
+export const { setEmployees, addEmployee, removeEmployee, updateEmployee, filterEmployeesByNameOrEmail } = employeesSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.employees.value)`
-export const selectEmployees = (state: RootState) => state.employees.value;
+export const selectEmployees = (state: RootState) => state.employees.filtredValues;
 
 export default employeesSlice.reducer;

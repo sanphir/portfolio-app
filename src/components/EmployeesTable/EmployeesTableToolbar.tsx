@@ -5,7 +5,9 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
+import TextField from '@mui/material/TextField';
 import EditIcon from '@mui/icons-material/Edit';
 
 interface EmployeesTableToolbarProps {
@@ -13,18 +15,11 @@ interface EmployeesTableToolbarProps {
     onDeleteEmployee?: ((event: unknown) => void) | undefined;
     onEditEmployee?: ((event: unknown) => void) | undefined;
     onNewEmployee?: ((event: unknown) => void) | undefined;
+    onSearcheChanged?: ((event: React.ChangeEvent<HTMLInputElement>) => void) | undefined;
 }
 
 export const EmployeesTableToolbar = (props: EmployeesTableToolbarProps) => {
-    const { numSelected, onDeleteEmployee: handleDeleteEmployee, onEditEmployee: handleEditEmployee, onNewEmployee: handleNewEmployee } = props;
-    const editClick = () => {
-        console.log('edit clicked');
-
-    };
-    const addNewClick = () => {
-        console.log('addNew clicked');
-    };
-
+    const { numSelected, onDeleteEmployee: handleDeleteEmployee, onEditEmployee: handleEditEmployee, onNewEmployee: handleNewEmployee, onSearcheChanged: handleSearcheChanged } = props;
 
     return (
         <Toolbar
@@ -39,7 +34,7 @@ export const EmployeesTableToolbar = (props: EmployeesTableToolbarProps) => {
         >
             {numSelected > 0 ? (
                 <Typography
-                    sx={{ flex: '1 1 100%' }}
+                    sx={{ flex: '1 1 150px' }}
                     color="inherit"
                     variant="subtitle1"
                     component="div"
@@ -47,8 +42,10 @@ export const EmployeesTableToolbar = (props: EmployeesTableToolbarProps) => {
                     {numSelected} selected
                 </Typography>
             ) : (
+
+
                 <Typography
-                    sx={{ flex: '1 1 100%' }}
+                    sx={{ flex: '1 1 150px' }}
                     variant="h6"
                     id="tableTitle"
                     component="div"
@@ -56,12 +53,28 @@ export const EmployeesTableToolbar = (props: EmployeesTableToolbarProps) => {
                     Employees
                 </Typography>
             )}
+            <Box sx={{
+                display: 'flex', flex: '1 1 100%',
+                position: 'relative',
+                alignItems: 'flex-end', paddingLeft: '10px', paddingRight: '10px'
+            }}>
+                <TextField id="input-with-sx" label="Searche email or name"
+                    onChange={handleSearcheChanged}
+                    fullWidth
+                    variant="standard" />
+                <SearchIcon sx={{
+                    marginLeft: "6px",
+                    marginRight: "6px",
+                    position: "relative",
+                    top: "-6px"
+                }} />
+            </Box>
             {numSelected > 0 ? (
                 numSelected === 1 ?
                     (
                         <Box component="div" sx={{
                             display: 'flex',
-                            justifyContent: 'space-between' 
+                            justifyContent: 'space-between'
                         }}>
                             <Tooltip title="Edit employee">
                                 <IconButton onClick={handleEditEmployee}>
@@ -90,6 +103,8 @@ export const EmployeesTableToolbar = (props: EmployeesTableToolbarProps) => {
                     </Tooltip>
                 </div>
             )}
+
+
         </Toolbar>
     );
 };
