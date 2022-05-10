@@ -29,12 +29,6 @@ const DeniedPage = () => {
               display: "flex",
               justifyContent: "center"
             }}>
-              {/*      <Link to={locationFrom} className="bacLink"
-                style={{
-                  fontWeight: "bold",
-                  color: "rgb(25, 118, 210)",
-                  textDecorationColor: "rgb(25, 118, 210)",
-                }}> Back to "{locationFrom}"</Link> */}
               <Link to="/home" className="bacLink"
                 style={{
                   fontWeight: "bold",

@@ -11,7 +11,7 @@ function App() {
 
   const loaderDisplayed = useAppSelector(getLoaderDisplayed);
   return (
-    <div>
+    <>
       <Loader isDisplayed={loaderDisplayed} />
       <Navbar />
       <Outlet />
@@ -26,7 +26,7 @@ function App() {
         draggable
         pauseOnHover
       />
-    </div>
+    </>
   );
 }
 

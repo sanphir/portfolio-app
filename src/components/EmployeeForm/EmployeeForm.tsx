@@ -13,7 +13,8 @@ export const EmployeeForm = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  let isNew = (location.pathname?.indexOf("/employees/new") ?? -1) >= 0;
+  const isNew = (location.pathname?.indexOf("/employees/new") ?? -1) >= 0;
+  const employeeId = params?.id;
 
   const [employee, setEmployee] = React.useState<IEmployee>({
     name: "",
@@ -51,18 +52,17 @@ export const EmployeeForm = () => {
     });
   }
 
-  const save = async (employee: IUpdateEmployee | INewEmployee) => {
+  const save = React.useCallback((employee: IUpdateEmployee | INewEmployee) => {
     if (isNew) {
       saveNewEmployee(employee as INewEmployee);
     } else {
       saveEmployee(employee as IUpdateEmployee);
     }
-  }
+  }, [employeeId]);
 
   React.useEffect(() => {
-    console.log(`Employee form useEffect: isNew=${isNew} params.id=${params.id}`)
-    if (!isNew && params.id) {
-      EmployeeService.getEmployee(params.id ?? "").then(resolve => {
+    if (!isNew && employeeId) {
+      EmployeeService.getEmployee(employeeId).then(resolve => {
         if (!resolve.error) {
           setEmployee(resolve?.data as IEmployee);
         } else {
@@ -71,7 +71,7 @@ export const EmployeeForm = () => {
       });
     }
     return () => { }
-  }, [isNew]);
+  }, [isNew, employeeId]);
 
   return (
     <EmployeeFormControl
