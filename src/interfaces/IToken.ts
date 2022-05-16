@@ -1,6 +1,5 @@
 export interface ITokenResponse {
     accessToken: string;
-    refreshToken: string;
 }
 
 export interface ITokenInfo {
