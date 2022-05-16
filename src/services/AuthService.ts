@@ -1,10 +1,11 @@
 import axios, { AxiosError } from "axios";
 import { Nullable } from "../interfaces/Common";
 import { ICommonResponse } from "../interfaces/ICommonResponse";
-import { ITokenInfo } from "../interfaces/ITokenInfo";
+import { ITokenResponse, ITokenInfo } from "../interfaces/IToken";
 import { API_URL } from "../config";
+import jwtDecode from "jwt-decode";
 
-const TOKEN_URL = `${API_URL}token`;
+const TOKEN_URL = `${API_URL}api/Auth/token`;
 
 export class AuthService {
     async signin(username: string, password: string): Promise<ICommonResponse<ITokenInfo>> {
@@ -16,35 +17,42 @@ export class AuthService {
                 },
             });
 
-            localStorage.setItem("tokenInfo", JSON.stringify(response.data));
+            let tokenResponse = response.data as ITokenResponse;
+            let tokenInfo = jwtDecode(tokenResponse?.accessToken ?? "") as ITokenInfo;
+
+            localStorage.setItem("accessToken", tokenResponse?.accessToken ?? "");
+            localStorage.setItem("refreshToken", tokenResponse?.refreshToken ?? "");
+            localStorage.setItem("tokenInfo", JSON.stringify(tokenInfo));
 
             return {
-                data: response.data,
+                data: tokenInfo,
                 error: null,
             };
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 return {
                     data: null,
-                    error: (<AxiosError>error).response?.data?.errorText ?? "Something went wrong!",
+                    error: (error as AxiosError).response?.data?.errorText ?? "Something went wrong!",
                 };
             } else {
                 return {
                     data: null,
-                    error: (<Error>error).message,
+                    error: (error as Error).message,
                 };
             }
         }
     }
 
     signout() {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
         localStorage.removeItem("tokenInfo");
     }
 
     getTokenInfo(): Nullable<ITokenInfo> {
         let storedTokenInfo = localStorage.getItem("tokenInfo")
         if (storedTokenInfo) {
-            return <ITokenInfo>JSON.parse(storedTokenInfo);
+            return JSON.parse(storedTokenInfo) as ITokenInfo;
         }
         return null;
     }
@@ -52,14 +60,13 @@ export class AuthService {
     isAuth(): boolean {
         let tokenInfo = this.getTokenInfo();
         if (tokenInfo) {
-            return Date.parse(tokenInfo.validTo ?? "") > Date.now();
+            return tokenInfo.exp * 1000 > Date.now();
         }
         return false;
     }
 
     authHeader(): any {
-        let tokenInfo = this.getTokenInfo();
-        return { Authorization: "Bearer " + tokenInfo?.accessToken ?? "" };
+        return { Authorization: "Bearer " + localStorage.getItem("accessToken") };
     }
 }
 

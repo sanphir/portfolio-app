@@ -17,7 +17,7 @@ export const Navbar = () => {
         navigate('signin');
     };
 
-    const signoutClick = () => {        
+    const signoutClick = () => {
         AuthService.signout();
         navigate('signin')
     };
@@ -66,7 +66,7 @@ export const Navbar = () => {
                                 Employees
                             </Link>
                             <Button color="inherit" onClick={signoutClick}>
-                                {`Sign out(${tokenInfo?.userName})`}
+                                {`Sign out(${tokenInfo?.name})`}
                             </Button>
                         </div>
                     )}

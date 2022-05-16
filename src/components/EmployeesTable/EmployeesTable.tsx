@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useTransition } from 'react';
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import Box from '@mui/material/Box';
@@ -42,6 +42,7 @@ export default function EmployeesTable() {
     const rows = useAppSelector(selectEmployees);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const [isPanding, startTransition] = useTransition();
 
     const [order, setOrder] = React.useState<Order>(Order.ASC);
     const [orderBy, setOrderBy] = React.useState<keyof IEmployee>('name');
@@ -55,7 +56,7 @@ export default function EmployeesTable() {
     const [openDeleteEmployeeAlert, setOpenDeleteEmployeeAlert] = React.useState(false);
 
     const handleDeleteEmployee = (event: unknown) => {
-        let current = rows.find(r => r.name == tokenInfo?.userName);
+        let current = rows.find(r => r.name === tokenInfo?.name);
         if (current && selected.includes(current.id)) {
             toast.warning("You can't delete self!");
             return;
@@ -93,7 +94,10 @@ export default function EmployeesTable() {
     }
 
     const handleSearcheChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        dispatch(filterEmployeesByNameOrEmail(event?.target?.value ?? null));
+        // dispatch(filterEmployeesByNameOrEmail(event?.target?.value ?? null));
+        startTransition(() => {
+            dispatch(filterEmployeesByNameOrEmail(event?.target?.value ?? null));
+        });
     }
 
     const handleRequestSort = (

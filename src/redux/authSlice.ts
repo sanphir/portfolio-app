@@ -1,15 +1,15 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Nullable } from '../interfaces/Common';
-import { ITokenInfo } from '../interfaces/ITokenInfo';
+import { ITokenResponse } from '../interfaces/IToken';
 import { RootState } from './store';
 
 
 export interface AuthState {
-    tokenInfo: Nullable<ITokenInfo>;
+    tokenResponse: Nullable<ITokenResponse>;
 }
 
 const initialState: AuthState = {
-    tokenInfo: null,
+    tokenResponse: null,
 };
 
 export const authSlice = createSlice({
@@ -17,18 +17,18 @@ export const authSlice = createSlice({
     initialState,
 
     reducers: {
-        storeToken: (state, action: PayloadAction<ITokenInfo>) => {
-            state.tokenInfo = action.payload;
+        storeToken: (state, action: PayloadAction<ITokenResponse>) => {
+            state.tokenResponse = action.payload;
         },
 
         clearToken: (state) => {
-            state.tokenInfo = null;
+            state.tokenResponse = null;
         }
     },
 });
 
 export const { storeToken, clearToken } = authSlice.actions;
 
-export const getTokenInfo = (state: RootState) => state.auth.tokenInfo;
+export const getAccessToken = (state: RootState) => state.auth.tokenResponse?.accessToken;
 
 export default authSlice.reducer;
