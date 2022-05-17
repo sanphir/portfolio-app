@@ -1,8 +1,9 @@
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { ICommonResponse } from "../interfaces/ICommonResponse";
 import { IEmployee, IUpdateEmployee, INewEmployee } from "../interfaces/IEmployee";
 import { API_URL } from "../config";
 import AuthService from "./AuthService";
+import { getErrorResposne } from "../helpers/axiosHelper";
 
 export class EmployeeService {
     async getEmployees(): Promise<ICommonResponse<IEmployee[]>> {
@@ -16,7 +17,7 @@ export class EmployeeService {
                 error: null,
             };
         } catch (error) {
-            return this.getErrorResposne(error);
+            return getErrorResposne(error);
         }
     }
 
@@ -32,7 +33,7 @@ export class EmployeeService {
                 error: null,
             };
         } catch (error) {
-            return this.getErrorResposne(error);
+            return getErrorResposne(error);
         }
     }
 
@@ -48,7 +49,7 @@ export class EmployeeService {
                 error: null,
             };
         } catch (error) {
-            return this.getErrorResposne(error);
+            return getErrorResposne(error);
         }
     }
 
@@ -64,7 +65,7 @@ export class EmployeeService {
             };
 
         } catch (error) {
-            return this.getErrorResposne(error);
+            return getErrorResposne(error);
         }
     }
 
@@ -83,28 +84,7 @@ export class EmployeeService {
                 error: null,
             };
         } catch (error) {
-            return this.getErrorResposne(error);
-        }
-    }
-
-    getErrorResposne(error: any): any {
-        let errorMessage = error?.response?.data;
-        if (errorMessage) {
-            return {
-                data: null,
-                error: errorMessage
-            }
-        }
-        if (axios.isAxiosError(error)) {
-            return {
-                data: null,
-                error: (error as AxiosError).response?.data?.errorText ?? (error as AxiosError).message,
-            };
-        } else {
-            return {
-                data: null,
-                error: (error as Error).message,
-            };
+            return getErrorResposne(error);
         }
     }
 }

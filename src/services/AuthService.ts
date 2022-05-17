@@ -1,10 +1,11 @@
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { Nullable } from "../interfaces/Common";
 import { ICommonResponse } from "../interfaces/ICommonResponse";
 import { ITokenResponse, ITokenInfo } from "../interfaces/IToken";
+import { getErrorResposne } from "../helpers/axiosHelper";
 import { API_URL } from "../config";
 import jwtDecode from "jwt-decode";
-import { Console } from "console";
+import { toast } from 'react-toastify';
 
 const TOKEN_URL = `${API_URL}api/Auth/token`;
 const REFRESH_TOKEN_URL = `${API_URL}api/Auth/refreshToken`;
@@ -13,6 +14,7 @@ export class AuthService {
     async signin(username: string, password: string): Promise<ICommonResponse<ITokenInfo>> {
         try {
             const response = await axios.post(TOKEN_URL, null, {
+                withCredentials: true,
                 params: {
                     username,
                     password,
@@ -30,31 +32,20 @@ export class AuthService {
                 error: null,
             };
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                return {
-                    data: null,
-                    error: (error as AxiosError).response?.data?.errorText ?? "Something went wrong!",
-                };
-            } else {
-                return {
-                    data: null,
-                    error: (error as Error).message,
-                };
-            }
+            return getErrorResposne(error);
         }
     }
 
     async refreshToken(): Promise<ICommonResponse<string>> {
         let accessToken = localStorage.getItem("accessToken");
         try {
-            console.log(`Refresh token: ${REFRESH_TOKEN_URL}`);
             const response = await axios.post(REFRESH_TOKEN_URL, null, {
+                withCredentials: true,
                 params: {
                     accessToken,
-                },
+                }
             });
 
-            console.log(`Refresh token response: ${JSON.stringify(response)}`);
             let tokenResponse = response.data as ITokenResponse;
             let tokenInfo = jwtDecode(tokenResponse?.accessToken ?? "") as ITokenInfo;
 
@@ -66,18 +57,7 @@ export class AuthService {
                 error: null,
             };
         } catch (error) {
-            console.log(`Refresh token error: ${JSON.stringify(error)}`);
-            if (axios.isAxiosError(error)) {
-                return {
-                    data: null,
-                    error: (error as AxiosError).response?.data?.errorText ?? "Something went wrong!",
-                };
-            } else {
-                return {
-                    data: null,
-                    error: (error as Error).message,
-                };
-            }
+            return getErrorResposne(error);
         }
     }
 
@@ -106,14 +86,23 @@ export class AuthService {
         return false;
     }
 
-    async authHeader(): Promise<any> {
+    needRefreshToken(): boolean {
         let tokenInfo = this.getTokenInfo();
         if (tokenInfo) {
-            console.log(`get authheader ${tokenInfo.exp * 1000} - ${Date.now() - 30} = ${(tokenInfo.exp * 1000) - (Date.now() - 30)}`);
-            if (tokenInfo.exp * 1000 <= Date.now() - 30) {
-                await this.refreshToken();
+            return tokenInfo.exp * 1000 <= Date.now() - 60;
+        }
+        return false;
+    }
+
+    async authHeader(): Promise<any> {
+        if (this.needRefreshToken()) {
+            let refreshResponse = await this.refreshToken();
+            if (refreshResponse?.error) {
+                this.signout();
+                toast.error(`Sign out: ${refreshResponse.error}`);
             }
         }
+
         return { Authorization: "Bearer " + localStorage.getItem("accessToken") };
     }
 }
