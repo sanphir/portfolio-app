@@ -51,13 +51,11 @@ export default function EmployeesTable() {
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-    const tokenInfo = AuthService.getTokenInfo();
-
     const [openDeleteEmployeeAlert, setOpenDeleteEmployeeAlert] = React.useState(false);
 
     const handleDeleteEmployee = (event: unknown) => {
-        let current = rows.find(r => r.name === tokenInfo?.name);
-        if (current && selected.includes(current.id)) {
+        let currentId = localStorage.getItem("empployeeId");
+        if (currentId && selected.includes(currentId)) {
             toast.warning("You can't delete self!");
             return;
         }
@@ -162,7 +160,7 @@ export default function EmployeesTable() {
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
     useEffect(() => {
-        console.log("EmployeesTable useEffect");
+        //console.log("EmployeesTable useEffect");
         dispatch(setLoaderDisplayed());
         try {
             dispatch(getEmployeesAsync());

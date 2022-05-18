@@ -1,4 +1,5 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import AuthService from "../services/AuthService";
 
 export enum UserRole {
@@ -9,9 +10,25 @@ export enum UserRole {
 
 export function RequireAuth({ children, role }: { children: JSX.Element, role: UserRole }) {
     console.log(`RequireAuth=${role}`);
-    let location = useLocation();
+    const location = useLocation();
+    const navigate = useNavigate();
     const tokenInfo = AuthService.getTokenInfo();
-    let isAuth = AuthService.isAuth();
+    const [isAuth, setIsAuth] = useState(AuthService.isAuth());
+
+    useEffect(() => {
+        if (isAuth && AuthService.needRefreshToken() && !AuthService.refreshinTokenStarted) {
+            AuthService.refreshToken().then((response) => {
+                if (response.error) {
+                    AuthService.signout();
+                    navigate('signin');
+                }
+                if (isAuth !== AuthService.isAuth()) {
+                    setIsAuth(AuthService.isAuth());
+                }
+            })
+        }
+        return () => { }
+    }, []);
 
     if (!isAuth) {
         console.log("not auth");

@@ -1,5 +1,6 @@
 export interface ITokenResponse {
     accessToken: string;
+    empployeeId: string;
 }
 
 export interface ITokenInfo {

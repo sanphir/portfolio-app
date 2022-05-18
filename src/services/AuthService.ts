@@ -22,10 +22,7 @@ export class AuthService {
             });
 
             let tokenResponse = response.data as ITokenResponse;
-            let tokenInfo = jwtDecode(tokenResponse?.accessToken ?? "") as ITokenInfo;
-
-            localStorage.setItem("accessToken", tokenResponse?.accessToken ?? "");
-            localStorage.setItem("tokenInfo", JSON.stringify(tokenInfo));
+            let tokenInfo = this.processTokenResponse(tokenResponse);
 
             return {
                 data: tokenInfo,
@@ -35,10 +32,12 @@ export class AuthService {
             return getErrorResposne(error);
         }
     }
+    refreshinTokenStarted = false;
 
     async refreshToken(): Promise<ICommonResponse<string>> {
         let accessToken = localStorage.getItem("accessToken");
         try {
+            this.refreshinTokenStarted = true;
             const response = await axios.post(REFRESH_TOKEN_URL, null, {
                 withCredentials: true,
                 params: {
@@ -47,10 +46,7 @@ export class AuthService {
             });
 
             let tokenResponse = response.data as ITokenResponse;
-            let tokenInfo = jwtDecode(tokenResponse?.accessToken ?? "") as ITokenInfo;
-
-            localStorage.setItem("accessToken", tokenResponse?.accessToken ?? "");
-            localStorage.setItem("tokenInfo", JSON.stringify(tokenInfo));
+            this.processTokenResponse(tokenResponse);
 
             return {
                 data: tokenResponse?.accessToken,
@@ -58,12 +54,27 @@ export class AuthService {
             };
         } catch (error) {
             return getErrorResposne(error);
+        } finally {
+            this.refreshinTokenStarted = false;
         }
     }
 
     signout() {
         localStorage.removeItem("accessToken");
+        localStorage.removeItem("empployeeId");
         localStorage.removeItem("tokenInfo");
+
+        document.location.href = "/";
+    }
+
+    processTokenResponse(tokenResponse: ITokenResponse): ITokenInfo {
+        let tokenInfo = jwtDecode(tokenResponse?.accessToken ?? "") as ITokenInfo;
+
+        localStorage.setItem("accessToken", tokenResponse?.accessToken ?? "");
+        localStorage.setItem("empployeeId", tokenResponse?.empployeeId ?? "");
+        localStorage.setItem("tokenInfo", JSON.stringify(tokenInfo));
+
+        return tokenInfo;
     }
 
     getTokenInfo(): Nullable<ITokenInfo> {
@@ -77,11 +88,7 @@ export class AuthService {
     isAuth(): boolean {
         let tokenInfo = this.getTokenInfo();
         if (tokenInfo) {
-            //TO DO
-            //this isAuth is used for showing elements and access to pages, but not to data
-            //should we check life time here?
             return true;
-            //return tokenInfo.exp * 1000 > Date.now();
         }
         return false;
     }
@@ -89,7 +96,7 @@ export class AuthService {
     needRefreshToken(): boolean {
         let tokenInfo = this.getTokenInfo();
         if (tokenInfo) {
-            return tokenInfo.exp * 1000 <= Date.now() - 60;
+            return tokenInfo.exp * 1000 <= Date.now() - 30000;
         }
         return false;
     }

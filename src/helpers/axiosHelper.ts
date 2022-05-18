@@ -3,7 +3,14 @@ import { ICommonResponse } from "../interfaces/ICommonResponse";
 
 export const getErrorResposne = (error: any): ICommonResponse<any> => {
     console.log(`Response error: ${JSON.stringify(error)}`);
-
+    if (error?.response?.status) {
+        if (error?.response?.status === 401) {
+            return {
+                data: null,
+                error: "Unauthorized"
+            }
+        }
+    }
     let errorMessage = error?.response?.data;
     if (errorMessage) {
         return {
