@@ -6,7 +6,6 @@ export const Home = () => {
         <div style={{
             display: "block",
             justifyContent: "center",
-            width: "100%",
             height: window.innerHeight - 60,
         }}>
             <div style={{
@@ -25,8 +24,9 @@ export const Home = () => {
                 <div style={{
                     width: "700px",
                     margin: "auto",
-                    color: "darkgray",
-                    fontSize: "larger"
+                    color: "gainsboro",
+                    fontSize: "larger",
+                    padding: "0 20px"
                 }}>
                     <h2 style={{ padding: "10px 20px", textAlign: "center" }}>Welcome to my portfolio!</h2>
                     <br />
@@ -34,7 +34,7 @@ export const Home = () => {
                     <p>My main tech stack is C#, .Net, React, SQL.</p>
                     <br />
                     <p>This website is not a real business application, it's just a small portfolio showing different ways to implement application elements such as login, navigation, data manipulation, validation, pagination, search, etc.</p>
-                    <p>You can use <b>admin/admin</b> test credentials to test the application.</p>
+                    <p>You can use <b>admin/admin</b> credentials to test the application.</p>
                     <br />
                     <p>Frontend implemented in React 18 using Material UI components, Redux, TypeScript, React router and etc</p>
                     <p>Backend implemented on .net 6.0 platform using EF Core.</p>
