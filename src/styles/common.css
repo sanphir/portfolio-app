@@ -1,0 +1,31 @@
+.contentCenterBlock {
+  width: fit-content;
+  margin: auto;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: beige;
+}
+
+.darkHeadersContainer h1,
+.darkHeadersContainer h2,
+.darkHeadersContainer h3,
+.darkHeadersContainer h4,
+.darkHeadersContainer h5,
+.darkHeadersContainer h6 {
+  color: darkgray;
+}
+
+.contentForm {
+  background-color: azure;
+  border-radius: 15px;
+}
+
+a {
+  color: beige;
+}

@@ -29,8 +29,10 @@ export const Navbar = () => {
                 return "Employee page";
             }
             switch (location.pathname) {
-                case "/home": return "Home page";
-                case "/signin": return "Sig in page";
+                case "/home":
+                case "/":
+                    return "Home page";
+                case "/signin": return "Sign in page";
                 case "/employees": return "Employees page";
                 case "/employees/new": return "New employee page";
                 case "/notfound": return "Not found page";
@@ -42,7 +44,7 @@ export const Navbar = () => {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
+            <AppBar position="static" sx={{ backgroundColor: "darkcyan" }}>
                 <Toolbar>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         {pageName()}

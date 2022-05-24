@@ -64,7 +64,7 @@ export class AuthService {
         localStorage.removeItem("empployeeId");
         localStorage.removeItem("tokenInfo");
 
-        document.location.href = "/";
+        document.location.href = "/signin";
     }
 
     processTokenResponse(tokenResponse: ITokenResponse): ITokenInfo {

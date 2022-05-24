@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { IEmployee, IUpdateEmployee, INewEmployee } from '../../interfaces/IEmployee';
 import EmployeeService from '../../services/EmployeeService';
 import { EmployeeFormControl } from './EmployeeFormControl';
+import { setLoaderDisplayed, setLoaderNone } from '../../redux/loaderSlice';
 
 export const EmployeeForm = () => {
   const params = useParams();
@@ -62,13 +63,19 @@ export const EmployeeForm = () => {
 
   React.useEffect(() => {
     if (!isNew && employeeId) {
-      EmployeeService.getEmployee(employeeId).then(resolve => {
-        if (!resolve.error) {
-          setEmployee(resolve?.data as IEmployee);
-        } else {
-          toast.success(`Error geting employee: ${resolve.error}`);
-        }
-      });
+      try {
+        dispatch(setLoaderDisplayed());
+        EmployeeService.getEmployee(employeeId).then(resolve => {
+          if (!resolve.error) {
+            console.log('set Employee')
+            setEmployee(resolve?.data as IEmployee);
+          } else {
+            toast.success(`Error geting employee: ${resolve.error}`);
+          }
+        });
+      } finally {
+        dispatch(setLoaderNone());
+      }
     }
     return () => { }
   }, [isNew, employeeId]);

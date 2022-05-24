@@ -1,5 +1,7 @@
+import "../../styles/common.css";
 import React, { useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from '../../redux/hooks';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from "@mui/material/Button";
@@ -56,6 +58,7 @@ const schema = yup.object({
 export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
     const { isNew, employee, onSave } = props;
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
     const [roleValue, setRoleValue] = React.useState<string>(employee.role);
 
@@ -127,13 +130,16 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
                 component="form"
                 sx={{
                     '& .MuiTextField-root': { m: 1, width: '25ch' },
-                    display: "block"
+                    display: "block",
+                    marginTop: "30px",
+                    position: "relative",
+                    top: "20%"
                 }}
                 noValidate
                 onSubmit={handleSubmit(onSubmit)}
                 autoComplete="off"
             >
-                <div className='formBlock'>
+                <div className='formBlock contentForm'>
                     <div>
                         <div style={{ display: "flex", flexDirection: "row" }}>
                             <div className='formBlockChild'>

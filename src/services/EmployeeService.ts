@@ -7,7 +7,7 @@ import { getErrorResposne } from "../helpers/axiosHelper";
 
 export class EmployeeService {
     async getEmployees(): Promise<ICommonResponse<IEmployee[]>> {
-        console.log("invoke getEmployees")
+        //console.log("invoke getEmployees")
         try {
             let authHeader = await AuthService.authHeader();
             const response = await axios.get(`${API_URL}api/Employee/list`, { headers: authHeader });
@@ -22,7 +22,7 @@ export class EmployeeService {
     }
 
     async getEmployee(id: string): Promise<ICommonResponse<IEmployee>> {
-        console.log("invoke getEmployees")
+        //console.log("invoke getEmployee")
 
         try {
             let authHeader = await AuthService.authHeader();
@@ -38,7 +38,7 @@ export class EmployeeService {
     }
 
     async updateEmployee(employee: IUpdateEmployee): Promise<ICommonResponse<IEmployee>> {
-        console.log("invoke updateEmployee")
+        //console.log("invoke updateEmployee")
 
         try {
             let authHeader = await AuthService.authHeader();
@@ -70,7 +70,7 @@ export class EmployeeService {
     }
 
     async removeEmployees(idsToRemove: string[]): Promise<ICommonResponse<string>> {
-        console.log("invoke removeEmployees")
+        //console.log("invoke removeEmployees")
 
         try {
             let authHeader = await AuthService.authHeader();

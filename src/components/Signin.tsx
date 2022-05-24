@@ -1,3 +1,4 @@
+import "../styles/common.css";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Container from "@mui/material/Container";
@@ -18,7 +19,7 @@ export const Signin = () => {
     const [signinError, setSigninError] = useState(false);
     const [signinErrorMessage, setSigninErrorMessage] = useState("");
 
-    const processSignin = async () => {        
+    const processSignin = async () => {
         dispatch(setLoaderDisplayed());
         try {
             const loginResponse = await AuthService.signin(
@@ -50,17 +51,18 @@ export const Signin = () => {
     return (
         <Container>
             <Box style={{
-                height: window.innerHeight - 60,
+                height: window.innerHeight - 200,
                 padding: 0,
                 margin: 0,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center"
             }}>
-                <div style={{
+                <div className="contentForm" style={{
                     display: "flex",
                     flexDirection: "column",
-                    alignItems: "center"
+                    alignItems: "center",
+                    padding: "20px 40px"
                 }}>
                     <TextField
                         id="signinTextField"

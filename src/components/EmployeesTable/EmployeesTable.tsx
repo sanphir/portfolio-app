@@ -1,3 +1,4 @@
+import "../../styles/common.css";
 import * as React from 'react';
 import { useEffect, useTransition } from 'react';
 import { useNavigate } from "react-router-dom";
@@ -25,7 +26,6 @@ import { EmployeesTableHead } from './EmployeesTableHead';
 import { DialogResult, Order, getComparator, stableSort } from './EmployeesTableCommon';
 import { IEmployee } from '../../interfaces/IEmployee';
 import EmployeeService from '../../services/EmployeeService';
-import AuthService from "../../services/AuthService";
 
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import {
@@ -171,7 +171,7 @@ export default function EmployeesTable() {
     }, []);
 
     return (
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{ margin: "5em", backgroundColor: "lavender" }} >
             <Paper sx={{ width: '100%', mb: 2 }}>
                 <Dialog
                     open={openDeleteEmployeeAlert}
@@ -283,6 +283,7 @@ export default function EmployeesTable() {
                 />
             </Paper>
             <FormControlLabel
+                style={{ margin: "0 20px" }}
                 control={<Switch checked={dense} onChange={handleChangeDense} />}
                 label="Dense padding"
             />
