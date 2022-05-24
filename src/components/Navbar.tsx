@@ -44,7 +44,7 @@ export const Navbar = () => {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static" sx={{ backgroundColor: "darkcyan" }}>
+            <AppBar position="static" sx={{ backgroundColor: "#457d7d" }}>
                 <Toolbar>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         {pageName()}
