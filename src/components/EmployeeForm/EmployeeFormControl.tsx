@@ -150,6 +150,7 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
                                     render={({ field }) =>
                                         <TextField
                                             required
+                                            disabled={!isNew}
                                             label="Name"
                                             helperText={errors?.nameField?.message}
                                             error={Boolean(errors?.nameField)}
