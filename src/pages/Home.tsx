@@ -36,12 +36,12 @@ export const Home = () => {
                     <p>This website is not a real business application, it's just a small portfolio showing different ways to implement application elements such as login, navigation, data manipulation, validation, pagination, search, etc.</p>
                     <p>You can use <b>admin/admin</b> credentials to test the application.</p>
                     <br />
-                    <p>Frontend implemented in React 18 using Material UI components, Redux, TypeScript, React router and etc</p>
+                    <p>Frontend implemented on React 18 using Material UI components, Redux, TypeScript, React router and etc.</p>
                     <p>Backend implemented on .net 6.0 platform using EF Core.</p>
                     <br />
                     <p>The source code of the projects can be found on github:</p>
-                    <p>Backend part at <a href="https://github.com/sanphir/StudyWebApp" target="_blank" rel="noopener noreferrer">github.com/sanphir/StudyWebApp</a></p>
-                    <p>And frontend part at <a href="https://github.com/sanphir/study-app" target="_blank" rel="noopener noreferrer">github.com/sanphir/study-app</a></p>
+                    <p>Backend part at <a href="https://github.com/sanphir/PortfolioWebApi" target="_blank" rel="noopener noreferrer">github.com/sanphir/PortfolioWebApi</a></p>
+                    <p>And frontend part at <a href="https://github.com/sanphir/portfolio-app" target="_blank" rel="noopener noreferrer">github.com/sanphir/portfolio-app</a></p>
                     <br />
 
                 </div>
