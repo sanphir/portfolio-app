@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import { RequireAuth, UserRole } from './hoc/RequireAuth';
 import { store } from './redux/store';
 import DeniedPage from './pages/DeniedPage';
+import TasksControl from './components/Tasks/TasksControl';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -31,8 +32,17 @@ root.render(
             <Route
               path="employees"
               element={
-                <RequireAuth role={UserRole.Any}>
+                <RequireAuth role={UserRole.Admin}>
                   <EmployeesTable />
+                </RequireAuth>
+              }
+            />
+
+            <Route
+              path="tasks"
+              element={
+                <RequireAuth role={UserRole.Any}>
+                  <TasksControl />
                 </RequireAuth>
               }
             />

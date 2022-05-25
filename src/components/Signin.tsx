@@ -28,7 +28,17 @@ export const Signin = () => {
             );
             if (loginResponse.data != null) {
                 setSigninError(false);
-                navigate("/employees", { replace: true });
+                switch (loginResponse.data?.role ?? "") {
+                    case "admin":
+                        navigate("/employees", { replace: true });
+                        break;
+                    case "user":
+                        navigate("/tasks", { replace: true });
+                        break;
+                    default:
+                        navigate("/home", { replace: true });
+                        break;
+                }
             } else {
                 toast.error(loginResponse.error ?? "Login failed");
                 setSigninError(true);

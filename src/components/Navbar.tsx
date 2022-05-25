@@ -11,7 +11,8 @@ export const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const tokenInfo = AuthService.getTokenInfo();
-    let isAuth = AuthService.isAuth();
+    const isAuth = AuthService.isAuth();
+    const isAdmin = (tokenInfo?.role ?? "") === "admin";
 
     const siginClick = () => {
         navigate('signin');
@@ -35,13 +36,14 @@ export const Navbar = () => {
                 case "/signin": return "Sign in page";
                 case "/employees": return "Employees page";
                 case "/employees/new": return "New employee page";
+                case "/tasks": return "Tasks";
                 case "/notfound": return "Not found page";
                 default: return "";
             }
         }
         return "";
     }
-
+    console.log(`isAuth=${isAuth}`);
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static" sx={{ backgroundColor: "#457d7d" }}>
@@ -64,8 +66,13 @@ export const Navbar = () => {
                             <Link to='home' className="navLink"  >
                                 Home
                             </Link>
-                            <Link to='employees' className="navLink" >
-                                Employees
+                            {isAdmin &&
+                                <Link to='employees' className="navLink" >
+                                    Employees
+                                </Link>
+                            }
+                            <Link to='tasks' className="navLink" >
+                                Tasks
                             </Link>
                             <Button color="inherit" onClick={signoutClick}>
                                 {`Sign out(${tokenInfo?.name})`}

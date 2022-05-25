@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import AuthService from "../services/AuthService";
 
 export enum UserRole {
@@ -11,8 +11,7 @@ export enum UserRole {
 export function RequireAuth({ children, role }: { children: JSX.Element, role: UserRole }) {
     console.log(`RequireAuth=${role}`);
     const location = useLocation();
-    const navigate = useNavigate();
-    const tokenInfo = AuthService.getTokenInfo();
+    const [tokenInfo, setTokenInfo] = useState(AuthService.getTokenInfo());
     const [isAuth, setIsAuth] = useState(AuthService.isAuth());
 
     useEffect(() => {
@@ -20,10 +19,10 @@ export function RequireAuth({ children, role }: { children: JSX.Element, role: U
             AuthService.refreshToken().then((response) => {
                 if (response.error) {
                     AuthService.signout();
-                    navigate('signin');
                 }
                 if (isAuth !== AuthService.isAuth()) {
                     setIsAuth(AuthService.isAuth());
+                    setTokenInfo(AuthService.getTokenInfo());
                 }
             })
         }
@@ -31,7 +30,6 @@ export function RequireAuth({ children, role }: { children: JSX.Element, role: U
     }, []);
 
     if (!isAuth) {
-        console.log("not auth");
         // Redirect them to the /login page, but save the current location they were
         // trying to go to when they were redirected. This allows us to send them
         // along to that page after they login, which is a nicer user experience
