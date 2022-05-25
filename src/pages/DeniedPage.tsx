@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom"
 import { Link } from "react-router-dom"
-
+import "../styles/common.css";
 interface StateFrom {
   from: string;
 }
@@ -16,13 +16,21 @@ const DeniedPage = () => {
       width: "100%",
       height: window.innerHeight - 60,
     }}>
-      <div style={{
+      <div className="darkHeadersContainer" style={{
         position: "relative",
         top: "30%",
+        backgroundColor: "aliceblue",
+        width: "220px",
+        height: "220px",
+        margin: "auto",
+        padding: "100px",
+        borderRadius: "50%"
       }}>
 
-        <h1 style={{ padding: "10px 20px", textAlign: "center", color: "rgb(25, 118, 210)" }}>Access denied</h1>
-        <h2 style={{ padding: "10px 20px", textAlign: "center", color: "rgb(25, 118, 210)" }}>You don't have enough privileges for perform this action!</h2>
+        <h1 style={{ textAlign: "center" }}>Access denied</h1>
+        <br />
+        <h3 style={{ textAlign: "center" }}>You don't have enough privileges for perform this action!</h3>
+        <br />
         {locationFrom &&
           (
             <div style={{
@@ -32,8 +40,9 @@ const DeniedPage = () => {
               <Link to="/home" className="bacLink"
                 style={{
                   fontWeight: "bold",
-                  color: "rgb(25, 118, 210)",
-                  textDecorationColor: "rgb(25, 118, 210)",
+                  fontSize: "large",
+                  color: "cadetblue",
+                  textDecorationColor: "cadetblue",
                 }}> Back to "Home"</Link>
             </div>
           )}

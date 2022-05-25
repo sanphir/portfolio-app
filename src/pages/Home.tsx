@@ -34,6 +34,7 @@ export const Home = () => {
                     <p>My main tech stack is C#, .Net, React, SQL.</p>
                     <br />
                     <p>This website is not a real business application, it's just a small portfolio showing different ways to implement application elements such as login, navigation, data manipulation, validation, pagination, search, etc.</p>
+                    <br />
                     <p>You can use <b>admin/admin</b> credentials to test the application.</p>
                     <br />
                     <p>Frontend implemented on React 18 using Material UI components, Redux, TypeScript, React router and etc.</p>
