@@ -71,7 +71,7 @@ export class AuthService {
         let tokenInfo = jwtDecode(tokenResponse?.accessToken ?? "") as ITokenInfo;
 
         localStorage.setItem("accessToken", tokenResponse?.accessToken ?? "");
-        localStorage.setItem("empployeeId", tokenResponse?.empployeeId ?? "");
+        localStorage.setItem("empployeeId", tokenResponse?.employeeId ?? "");
         localStorage.setItem("tokenInfo", JSON.stringify(tokenInfo));
 
         return tokenInfo;

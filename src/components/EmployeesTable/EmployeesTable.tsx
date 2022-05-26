@@ -219,7 +219,6 @@ export default function EmployeesTable() {
                             {stableSort(rows, getComparator(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
-                                    //console.log('row'+index+': '+JSON.stringify(row));
                                     const isItemSelected = isSelected(row.id.toString());
                                     const labelId = `enhanced-table-checkbox-${index}`;
 

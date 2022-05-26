@@ -43,7 +43,7 @@ export const Navbar = () => {
         }
         return "";
     }
-    console.log(`isAuth=${isAuth}`);
+    //console.log(`isAuth=${isAuth}`);
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static" sx={{ backgroundColor: "#457d7d" }}>

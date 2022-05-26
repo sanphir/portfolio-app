@@ -9,7 +9,21 @@ export class WorkTaskervice {
     async getAll(): Promise<ICommonResponse<IWorkTask[]>> {
         try {
             let authHeader = await AuthService.authHeader();
-            const response = await axios.get(`${API_URL}api/WorkTask/list`, { headers: authHeader });
+            const response = await axios.get(`${API_URL}api/WorkTask/all`, { headers: authHeader });
+
+            return {
+                data: response.data as IWorkTask[],
+                error: null,
+            };
+        } catch (error) {
+            return getErrorResposne(error);
+        }
+    }
+
+    async getAllFor(employeeId: string): Promise<ICommonResponse<IWorkTask[]>> {
+        try {
+            let authHeader = await AuthService.authHeader();
+            const response = await axios.get(`${API_URL}api/WorkTask/allFor/${employeeId}`, { headers: authHeader });
 
             return {
                 data: response.data as IWorkTask[],

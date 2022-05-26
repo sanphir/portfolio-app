@@ -1,6 +1,6 @@
 export interface ITokenResponse {
     accessToken: string;
-    empployeeId: string;
+    employeeId: string;
 }
 
 export interface ITokenInfo {

@@ -9,7 +9,7 @@ export class EmployeeService {
     async getAll(): Promise<ICommonResponse<IEmployee[]>> {
         try {
             let authHeader = await AuthService.authHeader();
-            const response = await axios.get(`${API_URL}api/Employee/list`, { headers: authHeader });
+            const response = await axios.get(`${API_URL}api/Employee/all`, { headers: authHeader });
 
             return {
                 data: response.data as IEmployee[],

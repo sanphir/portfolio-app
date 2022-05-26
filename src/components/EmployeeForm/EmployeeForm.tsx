@@ -70,7 +70,7 @@ export const EmployeeForm = () => {
             console.log('set Employee')
             setEmployee(resolve?.data as IEmployee);
           } else {
-            toast.success(`Error geting employee: ${resolve.error}`);
+            toast.error(`Error geting employee: ${resolve.error}`);
           }
         });
       } finally {

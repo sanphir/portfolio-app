@@ -34,3 +34,16 @@ h6 {
 a {
   color: beige;
 }
+
+.gridTask {
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 2vw;
+}
+.gridTask > div {
+  font-size: large;
+  padding: 0.5em;
+  background: gold;
+  text-align: center;
+}

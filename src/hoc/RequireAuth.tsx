@@ -9,7 +9,7 @@ export enum UserRole {
 }
 
 export function RequireAuth({ children, role }: { children: JSX.Element, role: UserRole }) {
-    console.log(`RequireAuth=${role}`);
+    //console.log(`RequireAuth=${role}`);
     const location = useLocation();
     const [tokenInfo, setTokenInfo] = useState(AuthService.getTokenInfo());
     const [isAuth, setIsAuth] = useState(AuthService.isAuth());
@@ -45,7 +45,7 @@ export function RequireAuth({ children, role }: { children: JSX.Element, role: U
             default:
                 return <Navigate to="/denied" state={{ from: location.pathname }} replace />;
         }
-        console.log(`userRole=${userRole}`);
+        //console.log(`userRole=${userRole}`);
         switch (role) {
             case UserRole.Admin:
                 return userRole === UserRole.Admin
