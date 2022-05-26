@@ -6,8 +6,7 @@ import AuthService from "./AuthService";
 import { getErrorResposne } from "../helpers/axiosHelper";
 
 export class EmployeeService {
-    async getEmployees(): Promise<ICommonResponse<IEmployee[]>> {
-        //console.log("invoke getEmployees")
+    async getAll(): Promise<ICommonResponse<IEmployee[]>> {
         try {
             let authHeader = await AuthService.authHeader();
             const response = await axios.get(`${API_URL}api/Employee/list`, { headers: authHeader });
@@ -21,12 +20,10 @@ export class EmployeeService {
         }
     }
 
-    async getEmployee(id: string): Promise<ICommonResponse<IEmployee>> {
-        //console.log("invoke getEmployee")
-
+    async get(employeeId: string): Promise<ICommonResponse<IEmployee>> {
         try {
             let authHeader = await AuthService.authHeader();
-            const response = await axios.get(`${API_URL}api/Employee/${id}`, { headers: authHeader });
+            const response = await axios.get(`${API_URL}api/Employee/${employeeId}`, { headers: authHeader });
 
             return {
                 data: response.data as IEmployee,
@@ -37,9 +34,7 @@ export class EmployeeService {
         }
     }
 
-    async updateEmployee(employee: IUpdateEmployee): Promise<ICommonResponse<IEmployee>> {
-        //console.log("invoke updateEmployee")
-
+    async update(employee: IUpdateEmployee): Promise<ICommonResponse<IEmployee>> {
         try {
             let authHeader = await AuthService.authHeader();
             const response = await axios.put(`${API_URL}api/Employee/update`, employee, { headers: authHeader });
@@ -53,9 +48,7 @@ export class EmployeeService {
         }
     }
 
-    async addEmployee(employee: INewEmployee): Promise<ICommonResponse<IEmployee>> {
-        console.log("invoke addEmployee")
-
+    async add(employee: INewEmployee): Promise<ICommonResponse<IEmployee>> {
         try {
             let authHeader = await AuthService.authHeader();
             const response = await axios.post(`${API_URL}api/Employee/add`, employee, { headers: authHeader });
@@ -69,9 +62,7 @@ export class EmployeeService {
         }
     }
 
-    async removeEmployees(idsToRemove: string[]): Promise<ICommonResponse<string>> {
-        //console.log("invoke removeEmployees")
-
+    async remove(idsToRemove: string[]): Promise<ICommonResponse<string>> {
         try {
             let authHeader = await AuthService.authHeader();
             await axios.delete(`${API_URL}api/Employee`, {

@@ -29,7 +29,7 @@ const initialState: EmployeesState = {
 export const getEmployeesAsync = createAsyncThunk(
     'employeesSlice/fetch',
     async () => {
-        const response = await EmployeeService.getEmployees();
+        const response = await EmployeeService.getAll();
         // The value we return becomes the `fulfilled` action payload
         return response.data;
     }

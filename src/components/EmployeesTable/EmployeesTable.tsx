@@ -67,7 +67,7 @@ export default function EmployeesTable() {
         if (dialogResult == DialogResult.YES) {
             try {
                 dispatch(setLoaderDisplayed());
-                EmployeeService.removeEmployees([...selected]).then(resolve => {
+                EmployeeService.remove([...selected]).then(resolve => {
                     if (!resolve.error) {
                         dispatch(removeEmployee([...selected]));
                         setSelected([]);

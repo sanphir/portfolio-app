@@ -28,7 +28,7 @@ export const EmployeeForm = () => {
   } as IEmployee);
 
   const saveEmployee = (updatedEmployee: IUpdateEmployee) => {
-    EmployeeService.updateEmployee(updatedEmployee).then(resolve => {
+    EmployeeService.update(updatedEmployee).then(resolve => {
       if (!resolve.error) {
         let savedEmployee = resolve?.data as IEmployee;
         dispatch(updateEmployee(savedEmployee));
@@ -41,7 +41,7 @@ export const EmployeeForm = () => {
   }
 
   const saveNewEmployee = (newEmployee: INewEmployee) => {
-    EmployeeService.addEmployee(newEmployee).then(resolve => {
+    EmployeeService.add(newEmployee).then(resolve => {
       if (!resolve.error) {
         let responseEmployee = resolve.data ?? {} as IEmployee;
         dispatch(addEmployee(responseEmployee));
@@ -65,7 +65,7 @@ export const EmployeeForm = () => {
     if (!isNew && employeeId) {
       try {
         dispatch(setLoaderDisplayed());
-        EmployeeService.getEmployee(employeeId).then(resolve => {
+        EmployeeService.get(employeeId).then(resolve => {
           if (!resolve.error) {
             console.log('set Employee')
             setEmployee(resolve?.data as IEmployee);

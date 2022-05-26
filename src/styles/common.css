@@ -23,7 +23,12 @@ h6 {
 
 .contentForm {
   background-color: azure;
-  border-radius: 10px;
+  border-radius: 5px;
+}
+
+.tasksContainer {
+  margin: 5em;
+  min-height: 800px;
 }
 
 a {
