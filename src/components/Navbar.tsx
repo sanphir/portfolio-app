@@ -20,7 +20,6 @@ export const Navbar = () => {
 
     const signoutClick = () => {
         AuthService.signout();
-        navigate('signin')
     };
 
     const pageName = (): string => {

@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 
 const TOKEN_URL = `${API_URL}api/Auth/token`;
 const REFRESH_TOKEN_URL = `${API_URL}api/Auth/refreshToken`;
+const SIGNOUT_URL = `${API_URL}api/Auth/signout`;
 
 export class AuthService {
     async signin(username: string, password: string): Promise<ICommonResponse<ITokenInfo>> {
@@ -32,6 +33,7 @@ export class AuthService {
             return getErrorResposne(error);
         }
     }
+
     refreshinTokenStarted = false;
 
     async refreshToken(): Promise<ICommonResponse<string>> {
@@ -59,12 +61,20 @@ export class AuthService {
         }
     }
 
-    signout() {
+    async signout() {
+
         localStorage.removeItem("accessToken");
         localStorage.removeItem("empployeeId");
         localStorage.removeItem("tokenInfo");
 
-        document.location.href = "/signin";
+        await axios.post(SIGNOUT_URL, null,
+            {
+                withCredentials: true,
+            }).then(resolve => {
+                document.location.href = "/signin";
+            }).catch(error => {
+                console.log(`Error on signout: ${JSON.stringify(error)}`);
+            });
     }
 
     processTokenResponse(tokenResponse: ITokenResponse): ITokenInfo {
