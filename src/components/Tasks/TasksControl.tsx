@@ -5,6 +5,7 @@ import WorkTaskService from '../../services/WorkTaskService';
 import { IWorkTask } from '../../interfaces/IWorkTask';
 import { toast } from 'react-toastify';
 import { setLoaderDisplayed, setLoaderNone } from '../../redux/loaderSlice';
+import TaskItem from "./TaskItem";
 
 const TasksControl = () => {
     const dispatch = useAppDispatch();
@@ -29,22 +30,15 @@ const TasksControl = () => {
     }, [])
 
     return (
-        <div className='contentForm tasksContainer gridTask'>
-            {workTasks.map((task, index) => {
-                return (
-                    <div>
-                        <p>title: {task.title}</p>
-                        <p>content: {task.content}</p>
-                        <p>status: {task.status}</p>
-                        <p>createdDate: {task.createdDate}</p>
-                        <p>lastModifiedDate: {task.lastModifiedDate}</p>
-                        <p>completedAt: {task.completedAt}</p>
-                        <p>assignedTo: {task.assignedTo}</p>
-                        <p>owner: {task.owner}</p>
-                    </div>
-                );
-            })}
-        </div>
+        <div className='contentForm tasksContainer'>
+            {
+                workTasks.map((task, index) => {
+                    return (
+                        <TaskItem task={task} key={index} />
+                    );
+                })
+            }
+        </div >
     )
 }
 

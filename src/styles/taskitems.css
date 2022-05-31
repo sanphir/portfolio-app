@@ -1,0 +1,36 @@
+.taskItemControl {
+  max-width: 350px;
+  padding: 0;
+  display: inline-block;
+  margin: 20px;
+  background-color: cornsilk;
+  border: 1px solid gray;
+}
+
+.taskItemTitle {
+  background-color: darkslategray;
+}
+
+.taskItemTitle,
+.taskItemContent,
+.taskItemFooter {
+  width: auto;
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+  font-size: large;
+}
+
+.taskItemContent {
+  color: black;
+}
+
+.taskItemTitle,
+.taskItemFooter {
+  color: white;
+}
+
+.taskItemContent,
+.taskItemInfo {
+  padding: 5px;
+}
