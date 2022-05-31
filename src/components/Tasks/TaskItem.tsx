@@ -1,5 +1,9 @@
 import React from 'react'
 import { IWorkTask, WorkTaskStatus } from '../../interfaces/IWorkTask';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import '../../styles/common.css'
 import '../../styles/taskitems.css'
 
@@ -30,17 +34,34 @@ const TaskItem = (props: TaskItemProps) => {
     <div className='taskItemControl' style={{
       opacity: (task.status === WorkTaskStatus.Canceled ? "0.7" : "1")
     }}>
-      <div className='taskItemTitle'>
-        <p>{task.title}</p>
+      <div className='taskItemHeader'>
+        <div className='taskItemTitle'>
+          <p>{task.title}</p>
+        </div>
+        <div className='taskItemToolBar'>
+          <Tooltip title="Edit">
+            <IconButton>
+              <EditIcon sx={{ color: "white" }} />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Delete">
+            <IconButton>
+              <DeleteIcon sx={{ color: "white" }} />
+            </IconButton>
+          </Tooltip>
+        </div>
       </div>
       <div className='taskItemContent'>
         <div>
+          <br />
           <p>{task.content}</p>
+          <br />
         </div>
       </div>
       <div className='taskItemInfo'>
         <div>
-          <p><b>Due date:</b> {new Date(task.completedAt).toLocaleDateString(language)}</p>
+          <p><b>Due date:</b> {new Date(task.dueDate).toLocaleDateString(language)}</p>
+          <p><b>Started:</b> {new Date(task.startedAt).toLocaleDateString(language)}</p>
           <p><b>Completed:</b> {new Date(task.completedAt).toLocaleDateString(language)}</p>
           <p><b>Created:</b> {new Date(task.createdDate).toLocaleString(language)}</p>
           <p><b>Last modified:</b> {new Date(task.lastModifiedDate).toLocaleString(language)}</p>
@@ -54,7 +75,7 @@ const TaskItem = (props: TaskItemProps) => {
         <p>{WorkTaskStatus[task.status]}</p>
       </div>
 
-    </div>
+    </div >
 
   )
 }

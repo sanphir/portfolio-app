@@ -7,7 +7,8 @@ export enum WorkTaskStatus {
 export interface INewWorkTask {
     title: string;
     content: string;
-    planedCompletedAt: any;
+    dueDate: any;
+    startedAt: any;
     completedAt: any;
     status: WorkTaskStatus;
     owner: string;

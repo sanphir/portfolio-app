@@ -8,10 +8,22 @@
 }
 
 .taskItemTitle {
+  width: auto;
+}
+.taskItemTitle > p {
+  position: relative;
+  top: 5px;
+  width: 255px;
+  justify-content: left;
+  padding-left: 5px;
+}
+
+.taskItemHeader,
+.taskItemToolBar {
   background-color: darkslategray;
 }
 
-.taskItemTitle,
+.taskItemHeader,
 .taskItemContent,
 .taskItemFooter {
   width: auto;
@@ -23,9 +35,10 @@
 
 .taskItemContent {
   color: black;
+  border-bottom: 1px solid gray;
 }
 
-.taskItemTitle,
+.taskItemHeader,
 .taskItemFooter {
   color: white;
 }
