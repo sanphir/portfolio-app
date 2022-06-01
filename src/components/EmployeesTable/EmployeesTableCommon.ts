@@ -3,13 +3,6 @@ export enum Order {
     DESC = 'desc'
 }
 
-export enum DialogResult {
-    YES = 'yes',
-    NO = 'no',
-    OK = 'ok',
-    CANCEL='cancel'     
-}
-
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {
         return -1;

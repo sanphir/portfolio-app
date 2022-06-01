@@ -9,7 +9,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import TextField from '@mui/material/TextField';
 import EditIcon from '@mui/icons-material/Edit';
-
 interface EmployeesTableToolbarProps {
     numSelected: number;
     onDeleteEmployee?: ((event: unknown) => void) | undefined;

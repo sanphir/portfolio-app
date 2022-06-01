@@ -65,14 +65,14 @@ export const Navbar = () => {
                             <Link to='home' className="navLink"  >
                                 Home
                             </Link>
+                            <Link to='tasks' className="navLink" >
+                                Tasks
+                            </Link>
                             {isAdmin &&
                                 <Link to='employees' className="navLink" >
                                     Employees
                                 </Link>
                             }
-                            <Link to='tasks' className="navLink" >
-                                Tasks
-                            </Link>
                             <Button color="inherit" onClick={signoutClick}>
                                 {`Sign out(${tokenInfo?.name})`}
                             </Button>

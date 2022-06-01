@@ -23,7 +23,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 import { EmployeesTableToolbar } from './EmployeesTableToolbar';
 import { EmployeesTableHead } from './EmployeesTableHead';
-import { DialogResult, Order, getComparator, stableSort } from './EmployeesTableCommon';
+import { Order, getComparator, stableSort } from './EmployeesTableCommon';
 import { IEmployee } from '../../interfaces/IEmployee';
 import EmployeeService from '../../services/EmployeeService';
 
@@ -36,6 +36,7 @@ import {
     filterEmployeesByNameOrEmail
 } from '../../redux/employeesSlice';
 import { setLoaderDisplayed, setLoaderNone } from '../../redux/loaderSlice';
+import { DialogResult } from "../../interfaces/Common";
 
 
 export default function EmployeesTable() {

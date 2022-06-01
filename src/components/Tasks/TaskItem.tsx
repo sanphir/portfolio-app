@@ -7,14 +7,17 @@ import EditIcon from '@mui/icons-material/Edit';
 import '../../styles/common.css'
 import '../../styles/taskitems.css'
 
+export interface TaskDialogCallBack {
+  (task: IWorkTask): void
+}
 interface TaskItemProps {
   task: IWorkTask;
+  onDelete: TaskDialogCallBack;
+  onEdit: TaskDialogCallBack;
 }
 
-
-
 const TaskItem = (props: TaskItemProps) => {
-  const { task } = props;
+  const { task, onDelete, onEdit } = props;
 
   const language = window.navigator.language;
 
@@ -40,12 +43,12 @@ const TaskItem = (props: TaskItemProps) => {
         </div>
         <div className='taskItemToolBar'>
           <Tooltip title="Edit">
-            <IconButton>
+            <IconButton onClick={(e) => { onEdit(task) }}>
               <EditIcon sx={{ color: "white" }} />
             </IconButton>
           </Tooltip>
           <Tooltip title="Delete">
-            <IconButton>
+            <IconButton onClick={(e) => { onDelete(task) }}>
               <DeleteIcon sx={{ color: "white" }} />
             </IconButton>
           </Tooltip>
