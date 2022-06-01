@@ -32,7 +32,7 @@ export const DeleteConfirmeDialog = (props: DeleteConfirmeDialogProps) => {
             </DialogContent>
             <DialogActions>
                 <Button onClick={(e) => onClose(e, DialogResult.CANCEL)}><b>Cancel</b></Button>
-                <Button onClick={(e) => onClose(e, DialogResult.OK)} autoFocus>OK</Button>
+                <Button onClick={(e) => onClose(e, DialogResult.YES)} autoFocus>Yes</Button>
             </DialogActions>
         </Dialog>
     )

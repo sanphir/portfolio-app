@@ -2,7 +2,7 @@ import "../../styles/common.css";
 import { useState, useEffect, useCallback } from 'react'
 import { useAppDispatch } from '../../redux/hooks';
 import WorkTaskService from '../../services/WorkTaskService';
-import { IWorkTask } from '../../interfaces/IWorkTask';
+import { INewWorkTask, IUpdateWorkTask, IWorkTask } from '../../interfaces/IWorkTask';
 import { toast } from 'react-toastify';
 import { setLoaderDisplayed, setLoaderNone } from '../../redux/loaderSlice';
 import TaskItem from "./TaskItem";
@@ -10,13 +10,7 @@ import TaskItem from "./TaskItem";
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
-import Button from '@mui/material/Button';
 
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import { DialogResult, Nullable } from "../../interfaces/Common";
 import { TaskItemDialog } from "./TaskItemDialog";
 import { DeleteConfirmeDialog } from "../CommonDialogs/DeleteConfirmeDialog";
@@ -54,7 +48,14 @@ const TasksControl = () => {
         setOpenTaskDialog(true);
     }, []);
 
-    const handleTaskDialogClose = useCallback((task: IWorkTask, dialogResult: DialogResult) => {
+    const handleTaskDialogCancel = useCallback(() => {
+        setOpenTaskDialog(false);
+        setTargetTask(null);
+        //TO DO
+        //process and refresh
+    }, []);
+
+    const handleTaskDialogSave = useCallback((isNew: boolean, task: INewWorkTask | IUpdateWorkTask) => {
         setOpenTaskDialog(false);
         setTargetTask(null);
         //TO DO
@@ -80,7 +81,7 @@ const TasksControl = () => {
 
     return (
         <div className='contentForm tasksContainer'>
-            <TaskItemDialog open={openTaskDialog} task={targetTask} onClose={handleTaskDialogClose} />
+            <TaskItemDialog open={openTaskDialog} task={targetTask} onSave={handleTaskDialogSave} onCancel={handleTaskDialogCancel} />
             <DeleteConfirmeDialog open={openDeleteTaskDialog} onClose={handleDeleteTaskDialogClose} message={"Are you sure you want to delete this task?"} />
             <div className="taskControlToolbar">
                 <Tooltip title="Add new task">

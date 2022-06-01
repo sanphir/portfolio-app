@@ -37,6 +37,7 @@ import {
 } from '../../redux/employeesSlice';
 import { setLoaderDisplayed, setLoaderNone } from '../../redux/loaderSlice';
 import { DialogResult } from "../../interfaces/Common";
+import { DeleteConfirmeDialog } from "../CommonDialogs/DeleteConfirmeDialog";
 
 
 export default function EmployeesTable() {
@@ -174,27 +175,7 @@ export default function EmployeesTable() {
     return (
         <Box sx={{ margin: "5em", backgroundColor: "lavender" }} >
             <Paper sx={{ width: '100%', mb: 2 }}>
-                <Dialog
-                    open={openDeleteEmployeeAlert}
-                    onClose={(e) => handleDeleteEmployeeAlert(e, DialogResult.CANCEL)}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title" >
-                        {"Deleting"}
-                    </DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            Are you sure you want to delete {selected.length} selected employees records?
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={(e) => handleDeleteEmployeeAlert(e, DialogResult.CANCEL)}><b>Cancel</b></Button>
-                        <Button onClick={(e) => handleDeleteEmployeeAlert(e, DialogResult.YES)} autoFocus>
-                            Yes
-                        </Button>
-                    </DialogActions>
-                </Dialog>
+                <DeleteConfirmeDialog open={openDeleteEmployeeAlert} onClose={handleDeleteEmployeeAlert} message={"Are you sure you want to delete " + selected.length + " selected employees records?"} />
                 <EmployeesTableToolbar numSelected={selected.length}
                     onDeleteEmployee={handleDeleteEmployee}
                     onEditEmployee={handleEditEmployee}
