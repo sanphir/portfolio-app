@@ -24,7 +24,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { EmployeesTableToolbar } from './EmployeesTableToolbar';
 import { EmployeesTableHead } from './EmployeesTableHead';
 import { Order, getComparator, stableSort } from './EmployeesTableCommon';
-import { IEmployee } from '../../interfaces/IEmployee';
+import { IEmployee, Role } from '../../interfaces/IEmployee';
 import EmployeeService from '../../services/EmployeeService';
 
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
@@ -233,7 +233,7 @@ export default function EmployeesTable() {
                                             </TableCell>
 
                                             <TableCell align="left">{row.email}</TableCell>
-                                            <TableCell align="left">{row.role}</TableCell>
+                                            <TableCell align="left">{Role[row.role as Role]}</TableCell>
                                             <TableCell align="left">{new Date(row?.birthDate).toLocaleString(language)}</TableCell>
                                             <TableCell align="right">{row.salary}</TableCell>
                                             <TableCell align="left">{new Date(row?.createdDate).toLocaleString(language)}</TableCell>

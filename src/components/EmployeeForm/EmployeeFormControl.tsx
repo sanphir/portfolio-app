@@ -13,7 +13,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import { IEmployee, INewEmployee, IUpdateEmployee } from '../../interfaces/IEmployee';
+import { IEmployee, INewEmployee, IUpdateEmployee, Role } from '../../interfaces/IEmployee';
 
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -60,7 +60,7 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
-    const [roleValue, setRoleValue] = React.useState<string>(employee.role);
+    const [roleValue, setRoleValue] = React.useState<Role>(employee.role);
 
     const language = window.navigator.language;
     const [createdDateValue, setCreatedDateValue] = React.useState<string>(employee?.createdDate ? new Date(employee?.createdDate).toLocaleString(language) : "");
@@ -70,7 +70,7 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
     const maxBirthDate = new Date(now.getFullYear() - 18, now.getMonth(), now.getDay());
 
     const handleRoleChange = (event: SelectChangeEvent) => {
-        setRoleValue(event.target.value as string);
+        setRoleValue(event.target.value as any);
     };
 
     const { handleSubmit, control, reset, formState: { errors, isValid } } = useForm<IFormInputs>({
@@ -78,7 +78,7 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
         mode: 'onBlur'
     });
     const onSubmit: SubmitHandler<IFormInputs> = (data) => {
-        //console.log(data);
+        //console.log(data);        
         if (isNew) {
             onSave({
                 name: data.nameField,
@@ -118,7 +118,7 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
             salaryField: employee?.salary ?? 0,
             birthDateField: new Date(employee?.birthDate)
         });
-        setRoleValue(employee?.role ?? "");
+        setRoleValue(employee?.role ?? Role.User);
         setCreatedDateValue(employee?.createdDate ? new Date(employee?.createdDate).toLocaleString(language) : "");
         setLastModifiedDate(employee?.lastModifiedDate ? new Date(employee?.lastModifiedDate).toLocaleString(language) : "");
         return () => { }
@@ -216,12 +216,12 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
                                     <Select
                                         labelId="role-select-label"
                                         id="role-select"
-                                        value={roleValue}
+                                        value={roleValue as any}
                                         label="Role"
                                         onChange={handleRoleChange}
                                     >
-                                        <MenuItem value={"admin"}>Admin</MenuItem>
-                                        <MenuItem value={"user"}>User</MenuItem>
+                                        <MenuItem value={Role.Admin}>{Role[Role.Admin]}</MenuItem>
+                                        <MenuItem value={Role.User}>{Role[Role.User]}</MenuItem>
                                     </Select>
                                 </FormControl>
                             </div>

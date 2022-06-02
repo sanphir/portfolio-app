@@ -8,8 +8,6 @@ export interface INewWorkTask {
     title: string;
     content: string;
     dueDate: any;
-    startedAt: any;
-    completedAt: any;
     status: WorkTaskStatus;
     owner: string;
     assignedTo: string;
@@ -21,6 +19,8 @@ export interface IUpdateWorkTask extends INewWorkTask {
 
 export interface IWorkTask extends IUpdateWorkTask {
     createdDate: any;
+    startedAt: any;
+    completedAt: any;
     ownerName: string;
     assignedToName: string;
     lastModifiedDate: any;
