@@ -2,9 +2,10 @@ import "../../styles/common.css";
 import { useState, useEffect, useCallback, useTransition } from 'react'
 import { useAppDispatch } from '../../redux/hooks';
 import WorkTaskService from '../../services/WorkTaskService';
-import { INewWorkTask, IUpdateWorkTask, IWorkTask } from '../../interfaces/IWorkTask';
+import { INewWorkTask, IUpdateWorkTask, IWorkTask, WorkTaskStatus } from '../../interfaces/IWorkTask';
 import { toast } from 'react-toastify';
 import { setLoaderDisplayed, setLoaderNone } from '../../redux/loaderSlice';
+import AuthService from "../../services/AuthService";
 import TaskItem from "./TaskItem";
 
 import Tooltip from '@mui/material/Tooltip';
@@ -21,8 +22,25 @@ const TasksControl = () => {
     const [workTasks, setWorkTasks] = useState<IWorkTask[]>([]);
 
     const [openDeleteTaskDialog, setOpenDeleteTaskDialog] = useState(false);
+
+    const tokenInfo = AuthService.getTokenInfo();
     const [openTaskDialog, setOpenTaskDialog] = useState(false);
-    const [targetTask, setTargetTask] = useState<Nullable<IWorkTask>>(null);
+    const newTask = {
+        id: "",
+        title: "",
+        content: "",
+        dueDate: null,
+        startedAt: null,
+        completedAt: null,
+        status: WorkTaskStatus.Registered,
+        owner: localStorage.getItem("empployeeId"),
+        assignedTo: "",
+        createdDate: new Date(),
+        ownerName: tokenInfo?.name,
+        assignedToName: "",
+        lastModifiedDate: new Date(),
+    } as IWorkTask;
+    const [targetTask, setTargetTask] = useState<IWorkTask>(newTask);
 
     useEffect(() => {
         let empployeeId = localStorage.getItem("empployeeId");
@@ -43,36 +61,28 @@ const TasksControl = () => {
     }, [])
 
     const handleNewTask = useCallback((e: any) => {
-        console.log(`New task click ${JSON.stringify(targetTask)}`);
-        if (targetTask) {
-            console.log("Clear task before new");
-            setTargetTask(null);
-        }
+        //console.log(`New task click ${JSON.stringify(targetTask)}`);
+        setTargetTask(newTask);
         setOpenTaskDialog(true);
     }, []);
 
     const handleTaskDialogCancel = useCallback(() => {
-        console.log("Edit cancel");
+        //console.log("Edit cancel");
         setOpenTaskDialog(false);
-        setTargetTask(null);
         //TO DO
         //process and refresh
     }, []);
 
     const handleTaskDialogSave = useCallback((isNew: boolean, task: INewWorkTask | IUpdateWorkTask) => {
-        console.log("Edit save");
+        //console.log("Edit save");
         setOpenTaskDialog(false);
-        //startTransition(() => { setTargetTask(null) });
-        setTargetTask(null);
         //TO DO
         //process and refresh
     }, []);
 
     const handleDeleteTaskDialogClose = useCallback((event: unknown, dialogResult: DialogResult) => {
-        console.log("Delete close");
+        //console.log("Delete close");
         setOpenDeleteTaskDialog(false);
-        //startTransition(() => { setTargetTask(null) });
-        setTargetTask(null);
         //TO DO
         //check result and delete task
     }, []);

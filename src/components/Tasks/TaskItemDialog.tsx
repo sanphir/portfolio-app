@@ -42,30 +42,16 @@ export interface TaskSaveCallBack {
 
 interface TaskItemDialogProps {
     open: boolean;
-    task: Nullable<IWorkTask>;
+    task: IWorkTask;
     onSave: TaskSaveCallBack;
     onCancel: SimpleCallBack;
 }
 
 export const TaskItemDialog = (props: TaskItemDialogProps) => {
     const { open, task, onSave, onCancel } = props;
-    const isNew = task == null;
+    const isNew = (task?.id ?? "") === "";
+    const [isEmployeeSourceLoaded, setIsEmployeeSourceLoaded] = useState(false);
 
-    const [currentTask, setCurrentTask] = useState<IWorkTask>({
-        id: "",
-        title: "just test",
-        content: "",
-        dueDate: null,
-        startedAt: null,
-        completedAt: null,
-        status: WorkTaskStatus.Registered,
-        owner: "",
-        assignedTo: "",
-        createdDate: new Date(),
-        ownerName: "",
-        assignedToName: "",
-        lastModifiedDate: new Date(),
-    } as IWorkTask);
 
     const dispatch = useAppDispatch();
     const employees = useAppSelector(getEmployeesSelectionSource);
@@ -103,13 +89,12 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
         }
     }
     useEffect(() => {
-        if (!isNew) {
-            setCurrentTask(task);
-            reset({
-                isNew: isNew,
-                titleField: task?.title ?? "",
-            });
-        }
+        //if (!isNew) {
+        reset({
+            isNew: isNew,
+            titleField: task?.title ?? "",
+        });
+        //}
         console.log(`task=${JSON.stringify(task)}`);
         //console.log(`isNew=${isNew} and currentTask=${JSON.stringify(currentTask)}`);
     }, [task]);
@@ -120,6 +105,7 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
         try {
             dispatch(getEmployeesAsync());
         } finally {
+            setIsEmployeeSourceLoaded(true);
             dispatch(setLoaderNone());
         }
         return () => { }
@@ -149,7 +135,7 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
                         <Controller
                             name="titleField"
                             control={control}
-                            defaultValue={currentTask.title}
+                            defaultValue={task.title}
                             render={({ field }) =>
                                 <TextField
                                     required
@@ -170,7 +156,9 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
                             disablePortal
                             id="owner-combo-box-demo"
                             options={employees}
-                            defaultValue={{ label: currentTask.ownerName, id: currentTask.owner }}
+                            /* isOptionEqualToValue={(option, value) => option.id === task.owner} */
+                            defaultValue={(!isNew && isEmployeeSourceLoaded && task.owner) ? { label: task.ownerName, id: task.owner } : null}
+                            isOptionEqualToValue={(option, value) => option.id === value.id}
                             sx={{ width: 300 }}
                             renderInput={(params) => <TextField {...params} label="Owner" />}
                         />
@@ -178,7 +166,8 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
                             disablePortal
                             id="assignedTo-combo-box-demo"
                             options={employees}
-                            defaultValue={{ label: currentTask.assignedToName, id: currentTask.assignedTo }}
+                            defaultValue={(!isNew && isEmployeeSourceLoaded && task.assignedTo) ? { label: task.assignedToName, id: task.assignedTo } : null}
+                            isOptionEqualToValue={(option, value) => option.id === value.id}
                             sx={{ width: 300 }}
                             renderInput={(params) => <TextField {...params} label="Assigned to" />}
                         />
