@@ -9,13 +9,20 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import Box from '@mui/material/Box';
 import DialogTitle from '@mui/material/DialogTitle';
 import { DialogResult, Nullable } from "../../interfaces/Common";
+import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
-import { current } from '@reduxjs/toolkit';
 import { SimpleCallBack } from '../../interfaces/CallBackDefinitions';
+
+import { useAppSelector, useAppDispatch } from '../../redux/hooks';
+import {
+    getEmployeesAsync,
+    getEmployeesSelectionSource,
+} from '../../redux/employeesSlice';
+import { setLoaderDisplayed, setLoaderNone } from '../../redux/loaderSlice';
 
 interface IFormInputs {
     isNew: boolean,
@@ -60,12 +67,16 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
         lastModifiedDate: new Date(),
     } as IWorkTask);
 
-    const { handleSubmit, control, reset, formState: { errors, isValid } } = useForm<IFormInputs>({
-        resolver: yupResolver(schema),
-        mode: 'onBlur'
-    });
+    const dispatch = useAppDispatch();
+    const employees = useAppSelector(getEmployeesSelectionSource);
+
+    const { handleSubmit, control, reset,
+        formState: { errors, isValid } } = useForm<IFormInputs>({
+            resolver: yupResolver(schema),
+            mode: 'onBlur'
+        });
     const onSubmit: SubmitHandler<IFormInputs> = (data) => {
-        //console.log(data);
+        console.log(`On submit: ${data} isNew=${isNew}`);
         if (isNew) {
             onSave(isNew, {
                 title: data.titleField,
@@ -100,8 +111,19 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
             });
         }
         console.log(`task=${JSON.stringify(task)}`);
-        console.log(`isNew=${isNew} and currentTask=${JSON.stringify(currentTask)}`);
+        //console.log(`isNew=${isNew} and currentTask=${JSON.stringify(currentTask)}`);
     }, [task]);
+
+    useEffect(() => {
+        //console.log("EmployeesTable useEffect");
+        dispatch(setLoaderDisplayed());
+        try {
+            dispatch(getEmployeesAsync());
+        } finally {
+            dispatch(setLoaderNone());
+        }
+        return () => { }
+    }, []);
 
     return (
         <Dialog
@@ -109,18 +131,16 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
             aria-labelledby="task-dialog-title"
             aria-describedby="task-dialog-description" >
             <DialogTitle id="task-dialog-title" sx={{ color: 'darkgreen' }} >
-                {isNew ? "New task" : (currentTask?.title ?? "Untitle")}
+                {isNew ? "New task" : "Edit task"}
             </DialogTitle>
             <DialogContent>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <Box
                         component="form"
                         sx={{
-                            '& .MuiTextField-root': { m: 1, width: '25ch' },
-                            display: "block",
-                            marginTop: "30px",
-                            position: "relative",
-                            top: "20%"
+                            '& .MuiTextField-root': { m: 1, width: '50ch' },
+                            display: "flex",
+                            flexDirection: "column",
                         }}
                         noValidate
                         onSubmit={handleSubmit(onSubmit)}
@@ -133,23 +153,43 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
                             render={({ field }) =>
                                 <TextField
                                     required
-                                    disabled={!isNew}
                                     label="Title"
                                     helperText={errors?.titleField?.message}
                                     error={Boolean(errors?.titleField)}
                                     placeholder="Title"
                                     {...field} />}
                         />
+                        <TextField
+                            id="outlined-multiline-static"
+                            label="Content"
+                            multiline
+                            rows={4}
+                            defaultValue={task?.content ?? ""}
+                        />
+                        <Autocomplete
+                            disablePortal
+                            id="owner-combo-box-demo"
+                            options={employees}
+                            defaultValue={{ label: currentTask.ownerName, id: currentTask.owner }}
+                            sx={{ width: 300 }}
+                            renderInput={(params) => <TextField {...params} label="Owner" />}
+                        />
+                        <Autocomplete
+                            disablePortal
+                            id="assignedTo-combo-box-demo"
+                            options={employees}
+                            defaultValue={{ label: currentTask.assignedToName, id: currentTask.assignedTo }}
+                            sx={{ width: 300 }}
+                            renderInput={(params) => <TextField {...params} label="Assigned to" />}
+                        />
+                        <div>
+                            <Button onClick={(e) => onCancel()}><b>Cancel</b></Button>
+                            <Button type='submit' autoFocus>Save</Button>
+                        </div>
                     </Box>
                 </LocalizationProvider>
-                {/*                 <DialogContentText id="alert-dialog-description">
-
-                </DialogContentText> */}
             </DialogContent>
-            <DialogActions>
-                <Button onClick={(e) => onCancel()}><b>Cancel</b></Button>
-                <Button type='submit' autoFocus>Save</Button>
-            </DialogActions>
+
         </Dialog >
     )
 }

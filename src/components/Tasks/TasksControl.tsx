@@ -1,5 +1,5 @@
 import "../../styles/common.css";
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useTransition } from 'react'
 import { useAppDispatch } from '../../redux/hooks';
 import WorkTaskService from '../../services/WorkTaskService';
 import { INewWorkTask, IUpdateWorkTask, IWorkTask } from '../../interfaces/IWorkTask';
@@ -17,6 +17,7 @@ import { DeleteConfirmeDialog } from "../CommonDialogs/DeleteConfirmeDialog";
 
 const TasksControl = () => {
     const dispatch = useAppDispatch();
+    const [isPanding, startTransition] = useTransition();
     const [workTasks, setWorkTasks] = useState<IWorkTask[]>([]);
 
     const [openDeleteTaskDialog, setOpenDeleteTaskDialog] = useState(false);
@@ -42,13 +43,16 @@ const TasksControl = () => {
     }, [])
 
     const handleNewTask = useCallback((e: any) => {
+        console.log(`New task click ${JSON.stringify(targetTask)}`);
         if (targetTask) {
+            console.log("Clear task before new");
             setTargetTask(null);
         }
         setOpenTaskDialog(true);
     }, []);
 
     const handleTaskDialogCancel = useCallback(() => {
+        console.log("Edit cancel");
         setOpenTaskDialog(false);
         setTargetTask(null);
         //TO DO
@@ -56,14 +60,18 @@ const TasksControl = () => {
     }, []);
 
     const handleTaskDialogSave = useCallback((isNew: boolean, task: INewWorkTask | IUpdateWorkTask) => {
+        console.log("Edit save");
         setOpenTaskDialog(false);
+        //startTransition(() => { setTargetTask(null) });
         setTargetTask(null);
         //TO DO
         //process and refresh
     }, []);
 
     const handleDeleteTaskDialogClose = useCallback((event: unknown, dialogResult: DialogResult) => {
+        console.log("Delete close");
         setOpenDeleteTaskDialog(false);
+        //startTransition(() => { setTargetTask(null) });
         setTargetTask(null);
         //TO DO
         //check result and delete task
@@ -82,7 +90,7 @@ const TasksControl = () => {
     return (
         <div className='contentForm tasksContainer'>
             <TaskItemDialog open={openTaskDialog} task={targetTask} onSave={handleTaskDialogSave} onCancel={handleTaskDialogCancel} />
-            <DeleteConfirmeDialog open={openDeleteTaskDialog} onClose={handleDeleteTaskDialogClose} message={"Are you sure you want to delete this task?"} />
+            <DeleteConfirmeDialog open={openDeleteTaskDialog} onClose={handleDeleteTaskDialogClose} message={`Are you sure you want to delete "${targetTask?.title ?? ""}" task?`} />
             <div className="taskControlToolbar">
                 <Tooltip title="Add new task">
                     <IconButton onClick={handleNewTask}>

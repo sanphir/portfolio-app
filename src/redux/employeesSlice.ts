@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from './store';
 import EmployeeService from '../services/EmployeeService';
 import { IEmployee } from '../interfaces/IEmployee';
+import { ISelctionSourceItem } from '../interfaces/Common';
 
 export enum SliceStatus {
     IDLE = 'idle',
@@ -12,12 +13,14 @@ export enum SliceStatus {
 export interface EmployeesState {
     value: IEmployee[];
     filtredValues: IEmployee[];
+    selectionSource: ISelctionSourceItem[],
     status: SliceStatus;
 }
 
 const initialState: EmployeesState = {
     value: [],
     filtredValues: [],
+    selectionSource: [],
     status: SliceStatus.IDLE,
 };
 
@@ -44,22 +47,26 @@ export const employeesSlice = createSlice({
         setEmployees: (state, action: PayloadAction<IEmployee[]>) => {
             state.value = action.payload;
             state.filtredValues = [...state.value];
+            state.selectionSource = [...state.value.map(r => ({ label: r.name, id: r.id } as ISelctionSourceItem))]
         },
 
         addEmployee: (state, action: PayloadAction<IEmployee>) => {
             state.value = [...state.value, action.payload];
             state.filtredValues = [...state.value];
+            state.selectionSource = [...state.value.map(r => ({ label: r.name, id: r.id } as ISelctionSourceItem))]
         },
 
         updateEmployee: (state, action: PayloadAction<IEmployee>) => {
             var empIdx = state.value.findIndex(e => e.id == action.payload.id);
             state.value[empIdx] = action.payload;
             state.filtredValues = [...state.value];
+            state.selectionSource = [...state.value.map(r => ({ label: r.name, id: r.id } as ISelctionSourceItem))]
         },
 
         removeEmployee: (state, action: PayloadAction<string[]>) => {
             state.value = state.value.filter(e => !action.payload.includes(e.id));
             state.filtredValues = [...state.value];
+            state.selectionSource = [...state.value.map(r => ({ label: r.name, id: r.id } as ISelctionSourceItem))]
         },
 
         filterEmployeesByNameOrEmail: (state, action: PayloadAction<string>) => {
@@ -81,6 +88,7 @@ export const employeesSlice = createSlice({
                 state.status = SliceStatus.IDLE;
                 state.value = action.payload ?? [];
                 state.filtredValues = action.payload ?? [];
+                state.selectionSource = [...(action.payload ?? []).map(r => ({ label: r.name, id: r.id } as ISelctionSourceItem))];
             });
     },
 });
@@ -91,5 +99,6 @@ export const { setEmployees, addEmployee, removeEmployee, updateEmployee, filter
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.employees.value)`
 export const selectEmployees = (state: RootState) => state.employees.filtredValues;
+export const getEmployeesSelectionSource = (state: RootState) => state.employees.selectionSource;
 
 export default employeesSlice.reducer;

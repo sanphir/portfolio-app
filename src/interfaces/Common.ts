@@ -6,3 +6,7 @@ export enum DialogResult {
     OK = 'ok',
     CANCEL = 'cancel'
 }
+export interface ISelctionSourceItem {
+    label: string;
+    id: string;
+}
