@@ -12,7 +12,7 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 
-import { DialogResult, Nullable } from "../../interfaces/Common";
+import { DialogResult } from "../../interfaces/Common";
 import { TaskItemDialog } from "./TaskItemDialog";
 import { DeleteConfirmeDialog } from "../CommonDialogs/DeleteConfirmeDialog";
 

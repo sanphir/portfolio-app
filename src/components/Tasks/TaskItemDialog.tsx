@@ -1,3 +1,4 @@
+import "../../styles/common.css";
 import { useEffect, useState } from 'react'
 import { INewWorkTask, IUpdateWorkTask, IWorkTask, WorkTaskStatus } from '../../interfaces/IWorkTask';
 import Dialog from '@mui/material/Dialog';
@@ -10,6 +11,7 @@ import Box from '@mui/material/Box';
 import DialogTitle from '@mui/material/DialogTitle';
 import { DialogResult, Nullable } from "../../interfaces/Common";
 import Autocomplete from '@mui/material/Autocomplete';
+import Popper from '@mui/material/Popper';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
@@ -55,6 +57,24 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
 
     const dispatch = useAppDispatch();
     const employees = useAppSelector(getEmployeesSelectionSource);
+
+    const autocompletePopper = function (props: any) {
+        return (<Popper {...props}
+            disablePortal={false}
+            modifiers={[
+                {
+                    name: 'preventOverflow',
+                    enabled: false,
+                    options: {
+                        altAxis: true,
+                        altBoundary: true,
+                        tether: false,
+                        rootBoundary: 'document',
+                        padding: 8,
+                    },
+                }]}
+            placement='bottom-start' />)
+    }
 
     const { handleSubmit, control, reset,
         formState: { errors, isValid } } = useForm<IFormInputs>({
@@ -155,8 +175,8 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
                         <Autocomplete
                             disablePortal
                             id="owner-combo-box-demo"
+                            PopperComponent={autocompletePopper}
                             options={employees}
-                            /* isOptionEqualToValue={(option, value) => option.id === task.owner} */
                             defaultValue={(!isNew && isEmployeeSourceLoaded && task.owner) ? { label: task.ownerName, id: task.owner } : null}
                             isOptionEqualToValue={(option, value) => option.id === value.id}
                             sx={{ width: 300 }}
@@ -165,6 +185,7 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
                         <Autocomplete
                             disablePortal
                             id="assignedTo-combo-box-demo"
+                            PopperComponent={autocompletePopper}
                             options={employees}
                             defaultValue={(!isNew && isEmployeeSourceLoaded && task.assignedTo) ? { label: task.assignedToName, id: task.assignedTo } : null}
                             isOptionEqualToValue={(option, value) => option.id === value.id}

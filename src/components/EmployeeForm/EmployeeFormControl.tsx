@@ -78,7 +78,7 @@ export const EmployeeFormControl = (props: EmployeeFormControlProps) => {
         mode: 'onBlur'
     });
     const onSubmit: SubmitHandler<IFormInputs> = (data) => {
-        //console.log(data);        
+        //console.log(data);
         if (isNew) {
             onSave({
                 name: data.nameField,
