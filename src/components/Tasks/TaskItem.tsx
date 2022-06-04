@@ -6,6 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import '../../styles/common.css'
 import '../../styles/taskitems.css'
+import { getTitleColor } from './TaskCommon';
 
 export interface TaskDialogCallBack {
   (task: IWorkTask): void
@@ -20,16 +21,6 @@ const TaskItem = (props: TaskItemProps) => {
   const { task, onDelete, onEdit } = props;
 
   const language = window.navigator.language;
-
-  const getTitleColor = (status: WorkTaskStatus) => {
-    switch (status) {
-      case WorkTaskStatus.Registered: return "darkcyan";
-      case WorkTaskStatus.Started: return "coral";
-      case WorkTaskStatus.Completed: return "forestgreen";
-      case WorkTaskStatus.Canceled: return "gray";
-      default: return "red";
-    }
-  }
 
   const titleColor: any = getTitleColor(task.status);
 

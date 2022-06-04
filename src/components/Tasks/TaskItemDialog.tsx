@@ -14,6 +14,10 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Popper from '@mui/material/Popper';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
@@ -25,6 +29,7 @@ import {
     getEmployeesSelectionSource,
 } from '../../redux/employeesSlice';
 import { setLoaderDisplayed, setLoaderNone } from '../../redux/loaderSlice';
+import { getTitleColor as getTaskStatusColor } from "./TaskCommon";
 
 interface IFormInputs {
     isNew: boolean,
@@ -53,7 +58,7 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
     const { open, task, onSave, onCancel } = props;
     const isNew = (task?.id ?? "") === "";
     const [isEmployeeSourceLoaded, setIsEmployeeSourceLoaded] = useState(false);
-
+    const [taskState, setTaskState] = useState<WorkTaskStatus>(task?.status);
 
     const dispatch = useAppDispatch();
     const employees = useAppSelector(getEmployeesSelectionSource);
@@ -76,11 +81,22 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
             placement='bottom-start' />)
     }
 
+    const [selectedTaskStateColor, setSelectedTaskStateColor] = useState("black");
+    const handleStatusChange = (event: SelectChangeEvent<typeof WorkTaskStatus>) => {
+        console.log(`selected status:=${event.target.value}`);
+        setSelectedTaskStateColor(getTaskStatusColor(event.target.value as any));
+        setTaskState(
+            // @ts-expect-error autofill of arbitrary value is not handled.
+            event.target.value,
+        );
+    };
+
     const { handleSubmit, control, reset,
         formState: { errors, isValid } } = useForm<IFormInputs>({
             resolver: yupResolver(schema),
             mode: 'onBlur'
         });
+
     const onSubmit: SubmitHandler<IFormInputs> = (data) => {
         console.log(`On submit: ${data} isNew=${isNew}`);
         if (isNew) {
@@ -109,18 +125,16 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
         }
     }
     useEffect(() => {
-        //if (!isNew) {
         reset({
             isNew: isNew,
             titleField: task?.title ?? "",
         });
-        //}
-        console.log(`task=${JSON.stringify(task)}`);
+        setSelectedTaskStateColor(getTaskStatusColor(task.status));
+        //console.log(`task=${JSON.stringify(task)}`);
         //console.log(`isNew=${isNew} and currentTask=${JSON.stringify(currentTask)}`);
     }, [task]);
 
     useEffect(() => {
-        //console.log("EmployeesTable useEffect");
         dispatch(setLoaderDisplayed());
         try {
             dispatch(getEmployeesAsync());
@@ -179,7 +193,6 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
                             options={employees}
                             defaultValue={(!isNew && isEmployeeSourceLoaded && task.owner) ? { label: task.ownerName, id: task.owner } : null}
                             isOptionEqualToValue={(option, value) => option.id === value.id}
-                            sx={{ width: 300 }}
                             renderInput={(params) => <TextField {...params} label="Owner" />}
                         />
                         <Autocomplete
@@ -189,9 +202,29 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
                             options={employees}
                             defaultValue={(!isNew && isEmployeeSourceLoaded && task.assignedTo) ? { label: task.assignedToName, id: task.assignedTo } : null}
                             isOptionEqualToValue={(option, value) => option.id === value.id}
-                            sx={{ width: 300 }}
                             renderInput={(params) => <TextField {...params} label="Assigned to" />}
                         />
+                        <div style={{
+                            margin: "8px",
+                            width: "50ch"
+                        }}>
+                            <FormControl fullWidth>
+                                <InputLabel id="status-select-label">Status</InputLabel>
+                                <Select
+                                    sx={{ color: selectedTaskStateColor }}
+                                    labelId="status-select-label"
+                                    id="status-select"
+                                    defaultValue={task.status as any}
+                                    onChange={handleStatusChange}
+                                    label="Status"
+                                >
+                                    <MenuItem value={WorkTaskStatus.Canceled} sx={{ color: getTaskStatusColor(WorkTaskStatus.Canceled) }}>{WorkTaskStatus[WorkTaskStatus.Canceled]}</MenuItem>
+                                    <MenuItem value={WorkTaskStatus.Registered} sx={{ color: getTaskStatusColor(WorkTaskStatus.Registered) }}>{WorkTaskStatus[WorkTaskStatus.Registered]}</MenuItem>
+                                    <MenuItem value={WorkTaskStatus.Started} sx={{ color: getTaskStatusColor(WorkTaskStatus.Started) }}>{WorkTaskStatus[WorkTaskStatus.Started]}</MenuItem>
+                                    <MenuItem value={WorkTaskStatus.Completed} sx={{ color: getTaskStatusColor(WorkTaskStatus.Completed) }}>{WorkTaskStatus[WorkTaskStatus.Completed]}</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </div>
                         <div>
                             <Button onClick={(e) => onCancel()}><b>Cancel</b></Button>
                             <Button type='submit' autoFocus>Save</Button>
