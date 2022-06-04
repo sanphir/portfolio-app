@@ -150,7 +150,7 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
             open={open}
             aria-labelledby="task-dialog-title"
             aria-describedby="task-dialog-description" >
-            <DialogTitle id="task-dialog-title" sx={{ color: 'darkgreen' }} >
+            <DialogTitle id="task-dialog-title" sx={{ color: selectedTaskStateColor }} >
                 {isNew ? "New task" : "Edit task"}
             </DialogTitle>
             <DialogContent>
