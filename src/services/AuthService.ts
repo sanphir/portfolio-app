@@ -70,10 +70,10 @@ export class AuthService {
         await axios.post(SIGNOUT_URL, null,
             {
                 withCredentials: true,
-            }).then(resolve => {
-                document.location.href = "/signin";
             }).catch(error => {
                 console.log(`Error on signout: ${JSON.stringify(error)}`);
+            }).finally(() => {
+                document.location.href = "/signin";
             });
     }
 
