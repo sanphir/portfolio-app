@@ -67,24 +67,66 @@ const TasksControl = () => {
     }, []);
 
     const handleTaskDialogCancel = useCallback(() => {
-        //console.log("Edit cancel");
         setOpenTaskDialog(false);
-        //TO DO
-        //process and refresh
     }, []);
 
     const handleTaskDialogSave = useCallback((isNew: boolean, task: INewWorkTask | IUpdateWorkTask) => {
-        //console.log("Edit save");
         setOpenTaskDialog(false);
-        //TO DO
-        //process and refresh
+        dispatch(setLoaderDisplayed());
+        try {
+            if (isNew) {
+                WorkTaskService.add(task as INewWorkTask).then(resolve => {
+                    if (!resolve.error) {
+                        let responseTask = resolve.data ?? {} as IWorkTask;
+                        setWorkTasks([...workTasks, responseTask]);
+                        toast.success('Task saved!');
+                    } else {
+                        toast.error(`Error adding task: ${resolve.error}`);
+                    }
+                }).catch(err => {
+                    toast.error(`Error adding task: ${err}`);
+                });
+            } else {
+                WorkTaskService.update(task as IUpdateWorkTask).then(resolve => {
+                    if (!resolve.error) {
+                        let responseTask = resolve.data ?? {} as IWorkTask;
+                        let index = workTasks.findIndex(x => x.id === responseTask.id);
+                        if (index >= 0) {
+                            workTasks[index] = responseTask;
+                        }
+                        setWorkTasks([...workTasks]);
+                    } else {
+                        toast.error(`Error updating task: ${resolve.error}`);
+                    }
+                }).catch(err => {
+                    toast.error(`Error updating task: ${err}`);
+                });
+            }
+        } finally {
+            dispatch(setLoaderDisplayed());
+        }
     }, []);
 
     const handleDeleteTaskDialogClose = useCallback((event: unknown, dialogResult: DialogResult) => {
-        //console.log("Delete close");
         setOpenDeleteTaskDialog(false);
-        //TO DO
-        //check result and delete task
+        if (dialogResult === DialogResult.YES) {
+            dispatch(setLoaderDisplayed());
+            try {
+                WorkTaskService.remove([targetTask.id]).then(resolve => {
+                    if (!resolve.error) {
+                        let newTasks = workTasks.filter(task => task.id !== targetTask.id);
+                        setWorkTasks(newTasks);
+                        toast.success('Task deleted!');
+                    } else {
+                        toast.error(`Error deleting task: ${resolve.error}`);
+                    }
+                }).catch(err => {
+                    toast.error(`Error deleting task: ${err}`);
+                });
+            } finally {
+                dispatch(setLoaderDisplayed());
+            }
+        }
     }, []);
 
     const handleTaskEdit = useCallback((task: IWorkTask) => {

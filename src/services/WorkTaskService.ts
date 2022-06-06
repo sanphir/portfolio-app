@@ -95,7 +95,7 @@ export class WorkTaskervice {
 
         try {
             let authHeader = await AuthService.authHeader();
-            const response = await axios.post(`${API_URL}api/WorkTask/update`, workTask, { headers: authHeader });
+            const response = await axios.post(`${API_URL}api/WorkTask/add`, workTask, { headers: authHeader });
             return {
                 data: response.data as IWorkTask,
                 error: null,

@@ -1,5 +1,5 @@
 import "../../styles/common.css";
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { INewWorkTask, IUpdateWorkTask, IWorkTask, WorkTaskStatus } from '../../interfaces/IWorkTask';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -20,6 +20,7 @@ import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { SimpleCallBack } from '../../interfaces/CallBackDefinitions';
+import { addHours } from "date-fns";
 
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import {
@@ -55,8 +56,9 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
     const isNew = (task?.id ?? "") === "";
     const [isEmployeeSourceLoaded, setIsEmployeeSourceLoaded] = useState(false);
     const [taskState, setTaskState] = useState<WorkTaskStatus>(task?.status);
+    const contentFieldRef = useRef<HTMLInputElement>();
 
-    const minDueDate = isNew ? new Date() : task?.dueDate;
+    const minDueDate = isNew ? new Date() : new Date(task?.dueDate);
 
     const dispatch = useAppDispatch();
     const employees = useAppSelector(getEmployeesSelectionSource);
@@ -100,11 +102,11 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
         if (isNew) {
             onSave(isNew, {
                 title: data.titleField,
-                content: '',
+                content: contentFieldRef.current?.value ?? "",
                 dueDate: data.dueDateField,
-                startedAt: null,
-                completedAt: null,
-                status: WorkTaskStatus.Registered,
+                startedAt: taskState === WorkTaskStatus.Registered ? new Date() : undefined,
+                completedAt: undefined,
+                status: taskState,
                 owner: '',
                 assignedTo: ''
             } as INewWorkTask);
@@ -112,7 +114,7 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
             onSave(isNew, {
                 id: task.id,
                 title: data.titleField,
-                content: '',
+                content: contentFieldRef.current?.value ?? "",
                 dueDate: data.dueDateField,
                 startedAt: null,
                 completedAt: null,
@@ -125,7 +127,7 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
     useEffect(() => {
         reset({
             titleField: task?.title ?? "",
-            dueDateField: task?.dueDate ?? new Date()
+            dueDateField: isNew ? addHours(new Date(), 1) : task?.dueDate ?? addHours(new Date(), 1)
         });
         setSelectedTaskStateColor(getTaskStatusColor(task.status));
         //console.log(`task=${JSON.stringify(task)}`);
@@ -179,6 +181,7 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
                         />
                         <TextField
                             id="outlined-multiline-static"
+                            inputRef={contentFieldRef}
                             label="Content"
                             multiline
                             rows={4}
@@ -209,7 +212,7 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
                             disabled
                             PopperComponent={autocompletePopper}
                             options={employees}
-                            defaultValue={(!isNew && isEmployeeSourceLoaded && task.owner) ? { label: task.ownerName, id: task.owner } : null}
+                            defaultValue={(isEmployeeSourceLoaded && task.owner) ? { label: task.ownerName, id: task.owner } : null}
                             isOptionEqualToValue={(option, value) => option.id === value.id}
                             renderInput={(params) => <TextField {...params} label="Owner" />}
                         />
@@ -226,7 +229,7 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
                             margin: "8px",
                             width: "50ch"
                         }}>
-                            <FormControl fullWidth>
+                            <FormControl disabled={isNew} fullWidth>
                                 <InputLabel id="status-select-label">Status</InputLabel>
                                 <Select
                                     sx={{ color: selectedTaskStateColor }}
