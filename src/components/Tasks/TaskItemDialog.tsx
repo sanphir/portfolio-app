@@ -2,14 +2,11 @@ import "../../styles/common.css";
 import { useEffect, useState } from 'react'
 import { INewWorkTask, IUpdateWorkTask, IWorkTask, WorkTaskStatus } from '../../interfaces/IWorkTask';
 import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import Box from '@mui/material/Box';
 import DialogTitle from '@mui/material/DialogTitle';
-import { DialogResult, Nullable } from "../../interfaces/Common";
 import Autocomplete from '@mui/material/Autocomplete';
 import Popper from '@mui/material/Popper';
 import TextField from '@mui/material/TextField';
@@ -17,6 +14,7 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -32,15 +30,13 @@ import { setLoaderDisplayed, setLoaderNone } from '../../redux/loaderSlice';
 import { getTitleColor as getTaskStatusColor } from "./TaskCommon";
 
 interface IFormInputs {
-    isNew: boolean,
     titleField: string,
     dueDateField: Date;
 }
 
 const schema = yup.object({
-    isNew: yup.boolean(),
-    nameField: yup.string().required("Title is required"),
-    dueDate: yup.date().required("Due date is required")
+    titleField: yup.string().required("Title is required"),
+    dueDateField: yup.date().required("Due date is required")
 }).required();
 
 export interface TaskSaveCallBack {
@@ -59,6 +55,8 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
     const isNew = (task?.id ?? "") === "";
     const [isEmployeeSourceLoaded, setIsEmployeeSourceLoaded] = useState(false);
     const [taskState, setTaskState] = useState<WorkTaskStatus>(task?.status);
+
+    const minDueDate = isNew ? new Date() : task?.dueDate;
 
     const dispatch = useAppDispatch();
     const employees = useAppSelector(getEmployeesSelectionSource);
@@ -126,8 +124,8 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
     }
     useEffect(() => {
         reset({
-            isNew: isNew,
             titleField: task?.title ?? "",
+            dueDateField: task?.dueDate ?? new Date()
         });
         setSelectedTaskStateColor(getTaskStatusColor(task.status));
         //console.log(`task=${JSON.stringify(task)}`);
@@ -186,9 +184,29 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
                             rows={4}
                             defaultValue={task?.content ?? ""}
                         />
+                        <Controller
+                            control={control}
+                            name="dueDateField"
+                            defaultValue={new Date(task.dueDate)}
+                            render={({ field: { onChange, onBlur, value, ref } }) => (
+                                <DesktopDatePicker
+                                    label="Due date *"
+                                    inputFormat="dd/MM/yyyy"
+                                    minDate={minDueDate}
+                                    onChange={onChange}
+                                    value={value}
+                                    renderInput={(params) => <TextField
+                                        onBlur={onBlur}
+                                        error={Boolean(errors?.dueDateField)}
+                                        helperText={errors?.dueDateField?.message}
+                                        {...params} />}
+                                />
+                            )}
+                        />
                         <Autocomplete
                             disablePortal
                             id="owner-combo-box-demo"
+                            disabled
                             PopperComponent={autocompletePopper}
                             options={employees}
                             defaultValue={(!isNew && isEmployeeSourceLoaded && task.owner) ? { label: task.ownerName, id: task.owner } : null}
@@ -227,7 +245,7 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
                         </div>
                         <div>
                             <Button onClick={(e) => onCancel()}><b>Cancel</b></Button>
-                            <Button type='submit' autoFocus>Save</Button>
+                            <Button type='submit' disabled={!isValid} autoFocus>Save</Button>
                         </div>
                     </Box>
                 </LocalizationProvider>
