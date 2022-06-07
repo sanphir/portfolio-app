@@ -29,6 +29,7 @@ import {
 } from '../../redux/employeesSlice';
 import { setLoaderDisplayed, setLoaderNone } from '../../redux/loaderSlice';
 import { getTitleColor as getTaskStatusColor } from "./TaskCommon";
+import { ISelctionSourceItem, Nullable } from "../../interfaces/Common";
 
 interface IFormInputs {
     titleField: string,
@@ -57,6 +58,8 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
     const [isEmployeeSourceLoaded, setIsEmployeeSourceLoaded] = useState(false);
     const [taskState, setTaskState] = useState<WorkTaskStatus>(task?.status);
     const contentFieldRef = useRef<HTMLInputElement>();
+    const [owner, setOwner] = useState<Nullable<ISelctionSourceItem>>(task.owner ? ({ id: task?.owner, label: task?.ownerName } as ISelctionSourceItem) : null);
+    const [assignedTo, setAssignedTo] = useState<Nullable<ISelctionSourceItem>>(task.assignedTo ? ({ id: task?.assignedTo, label: task?.assignedToName } as ISelctionSourceItem) : null);
 
     const minDueDate = isNew ? new Date() : new Date(task?.dueDate);
 
@@ -83,7 +86,6 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
 
     const [selectedTaskStateColor, setSelectedTaskStateColor] = useState("black");
     const handleStatusChange = (event: SelectChangeEvent<typeof WorkTaskStatus>) => {
-        console.log(`selected status:=${event.target.value}`);
         setSelectedTaskStateColor(getTaskStatusColor(event.target.value as any));
         setTaskState(
             // @ts-expect-error autofill of arbitrary value is not handled.
@@ -98,17 +100,17 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
         });
 
     const onSubmit: SubmitHandler<IFormInputs> = (data) => {
-        console.log(`On submit: ${data} isNew=${isNew}`);
+        let statusChanged = taskState !== task.status;
         if (isNew) {
             onSave(isNew, {
                 title: data.titleField,
                 content: contentFieldRef.current?.value ?? "",
                 dueDate: data.dueDateField,
-                startedAt: taskState === WorkTaskStatus.Registered ? new Date() : undefined,
+                startedAt: taskState === WorkTaskStatus.Started ? new Date() : undefined,
                 completedAt: undefined,
                 status: taskState,
-                owner: '',
-                assignedTo: ''
+                owner: owner?.id,
+                assignedTo: assignedTo?.id,
             } as INewWorkTask);
         } else {
             onSave(isNew, {
@@ -116,11 +118,11 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
                 title: data.titleField,
                 content: contentFieldRef.current?.value ?? "",
                 dueDate: data.dueDateField,
-                startedAt: null,
-                completedAt: null,
-                status: WorkTaskStatus.Registered,
-                owner: '',
-                assignedTo: ''
+                startedAt: statusChanged && taskState === WorkTaskStatus.Started ? new Date() : task.startedAt,
+                completedAt: statusChanged && taskState === WorkTaskStatus.Completed ? new Date() : task.completedAt,
+                status: taskState,
+                owner: owner?.id,
+                assignedTo: assignedTo?.id,
             } as IUpdateWorkTask);
         }
     }
@@ -129,6 +131,7 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
             titleField: task?.title ?? "",
             dueDateField: isNew ? addHours(new Date(), 1) : task?.dueDate ?? addHours(new Date(), 1)
         });
+        setTaskState(task?.status ?? WorkTaskStatus.Registered);
         setSelectedTaskStateColor(getTaskStatusColor(task.status));
         //console.log(`task=${JSON.stringify(task)}`);
         //console.log(`isNew=${isNew} and currentTask=${JSON.stringify(currentTask)}`);
@@ -213,6 +216,15 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
                             PopperComponent={autocompletePopper}
                             options={employees}
                             defaultValue={(isEmployeeSourceLoaded && task.owner) ? { label: task.ownerName, id: task.owner } : null}
+                            onChange={(event: React.SyntheticEvent, newValue: any) => {
+                                if (newValue) {
+                                    if (newValue.id !== owner?.id ?? "") {
+                                        setOwner({ id: newValue.id, label: newValue.label } as ISelctionSourceItem);
+                                    }
+                                } else {
+                                    setOwner(null);
+                                }
+                            }}
                             isOptionEqualToValue={(option, value) => option.id === value.id}
                             renderInput={(params) => <TextField {...params} label="Owner" />}
                         />
@@ -221,6 +233,15 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
                             id="assignedTo-combo-box-demo"
                             PopperComponent={autocompletePopper}
                             options={employees}
+                            onChange={(event: React.SyntheticEvent, newValue: any) => {
+                                if (newValue) {
+                                    if (newValue.id !== assignedTo?.id ?? "") {
+                                        setAssignedTo({ id: newValue.id, label: newValue.label } as ISelctionSourceItem);
+                                    }
+                                } else {
+                                    setAssignedTo(null);
+                                }
+                            }}
                             defaultValue={(!isNew && isEmployeeSourceLoaded && task.assignedTo) ? { label: task.assignedToName, id: task.assignedTo } : null}
                             isOptionEqualToValue={(option, value) => option.id === value.id}
                             renderInput={(params) => <TextField {...params} label="Assigned to" />}

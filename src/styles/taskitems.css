@@ -42,6 +42,12 @@
   color: black;
   border-bottom: 1px solid gray;
   height: 83px;
+  overflow: auto;
+}
+.taskItemContentTextContainer {
+  width: auto;
+  height: auto;
+  margin: auto;
 }
 
 .taskItemHeader,

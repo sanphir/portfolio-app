@@ -46,19 +46,17 @@ const TaskItem = (props: TaskItemProps) => {
         </div>
       </div>
       <div className='taskItemContent'>
-        <div>
-          <br />
+        <div className='taskItemContentTextContainer'>
           <p>{task.content}</p>
-          <br />
         </div>
       </div>
       <div className='taskItemInfo'>
         <div>
-          <p><b>Due date:</b> {new Date(task.dueDate).toLocaleDateString(language)}</p>
-          <p><b>Started:</b> {new Date(task.startedAt).toLocaleDateString(language)}</p>
-          <p><b>Completed:</b> {new Date(task.completedAt).toLocaleDateString(language)}</p>
-          <p><b>Created:</b> {new Date(task.createdDate).toLocaleString(language)}</p>
-          <p><b>Last modified:</b> {new Date(task.lastModifiedDate).toLocaleString(language)}</p>
+          <p><b>Due date:</b> {task.dueDate ? new Date(task.dueDate).toLocaleDateString(language) : "-"}</p>
+          <p><b>Started:</b> {task.startedAt ? new Date(task.startedAt).toLocaleDateString(language) : "-"}</p>
+          <p><b>Completed:</b> {task.completedAt ? new Date(task.completedAt).toLocaleDateString(language) : "-"}</p>
+          <p><b>Created:</b> {task.createdDate ? new Date(task.createdDate).toLocaleString(language) : "-"}</p>
+          <p><b>Last modified:</b> {task.lastModifiedDate ? new Date(task.lastModifiedDate).toLocaleString(language) : "-"}</p>
           <p><b>Assigned to:</b> {task.assignedToName}</p>
           <p><b>Owner:</b> {task.ownerName}</p>
         </div>

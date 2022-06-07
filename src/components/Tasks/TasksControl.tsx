@@ -1,5 +1,5 @@
 import "../../styles/common.css";
-import { useState, useEffect, useCallback, useTransition } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAppDispatch } from '../../redux/hooks';
 import WorkTaskService from '../../services/WorkTaskService';
 import { INewWorkTask, IUpdateWorkTask, IWorkTask, WorkTaskStatus } from '../../interfaces/IWorkTask';
@@ -18,7 +18,6 @@ import { DeleteConfirmeDialog } from "../CommonDialogs/DeleteConfirmeDialog";
 
 const TasksControl = () => {
     const dispatch = useAppDispatch();
-    const [isPanding, startTransition] = useTransition();
     const [workTasks, setWorkTasks] = useState<IWorkTask[]>([]);
 
     const [openDeleteTaskDialog, setOpenDeleteTaskDialog] = useState(false);
@@ -61,7 +60,6 @@ const TasksControl = () => {
     }, [])
 
     const handleNewTask = useCallback((e: any) => {
-        //console.log(`New task click ${JSON.stringify(targetTask)}`);
         setTargetTask(newTask);
         setOpenTaskDialog(true);
     }, []);
@@ -70,64 +68,62 @@ const TasksControl = () => {
         setOpenTaskDialog(false);
     }, []);
 
-    const handleTaskDialogSave = useCallback((isNew: boolean, task: INewWorkTask | IUpdateWorkTask) => {
+    const handleTaskDialogSave = (isNew: boolean, task: INewWorkTask | IUpdateWorkTask) => {
         setOpenTaskDialog(false);
         dispatch(setLoaderDisplayed());
-        try {
-            if (isNew) {
-                WorkTaskService.add(task as INewWorkTask).then(resolve => {
-                    if (!resolve.error) {
-                        let responseTask = resolve.data ?? {} as IWorkTask;
-                        setWorkTasks([...workTasks, responseTask]);
-                        toast.success('Task saved!');
-                    } else {
-                        toast.error(`Error adding task: ${resolve.error}`);
+        if (isNew) {
+            WorkTaskService.add(task as INewWorkTask).then(resolve => {
+                if (!resolve.error) {
+                    let responseTask = resolve.data ?? {} as IWorkTask;
+                    setWorkTasks([...workTasks, responseTask]);
+                    toast.success('Task saved!');
+                } else {
+                    toast.error(`Error adding task: ${resolve.error}`);
+                }
+            }).catch(err => {
+                toast.error(`Error adding task: ${err}`);
+            }).finally(() => {
+                dispatch(setLoaderNone());
+            });
+        } else {
+            WorkTaskService.update(task as IUpdateWorkTask).then(resolve => {
+                if (!resolve.error) {
+                    let responseTask = resolve.data ?? {} as IWorkTask;
+                    let index = workTasks.findIndex(x => x.id === responseTask.id);
+                    if (index >= 0) {
+                        workTasks[index] = responseTask;
                     }
-                }).catch(err => {
-                    toast.error(`Error adding task: ${err}`);
-                });
-            } else {
-                WorkTaskService.update(task as IUpdateWorkTask).then(resolve => {
-                    if (!resolve.error) {
-                        let responseTask = resolve.data ?? {} as IWorkTask;
-                        let index = workTasks.findIndex(x => x.id === responseTask.id);
-                        if (index >= 0) {
-                            workTasks[index] = responseTask;
-                        }
-                        setWorkTasks([...workTasks]);
-                    } else {
-                        toast.error(`Error updating task: ${resolve.error}`);
-                    }
-                }).catch(err => {
-                    toast.error(`Error updating task: ${err}`);
-                });
-            }
-        } finally {
-            dispatch(setLoaderDisplayed());
+                    setWorkTasks([...workTasks]);
+                } else {
+                    toast.error(`Error updating task after: ${resolve.error}`);
+                }
+            }).catch(err => {
+                toast.error(`Error updating task: ${err}`);
+            }).finally(() => {
+                dispatch(setLoaderNone());
+            });
         }
-    }, []);
+    };
 
-    const handleDeleteTaskDialogClose = useCallback((event: unknown, dialogResult: DialogResult) => {
+    const handleDeleteTaskDialogClose = (event: unknown, dialogResult: DialogResult) => {
         setOpenDeleteTaskDialog(false);
         if (dialogResult === DialogResult.YES) {
             dispatch(setLoaderDisplayed());
-            try {
-                WorkTaskService.remove([targetTask.id]).then(resolve => {
-                    if (!resolve.error) {
-                        let newTasks = workTasks.filter(task => task.id !== targetTask.id);
-                        setWorkTasks(newTasks);
-                        toast.success('Task deleted!');
-                    } else {
-                        toast.error(`Error deleting task: ${resolve.error}`);
-                    }
-                }).catch(err => {
-                    toast.error(`Error deleting task: ${err}`);
-                });
-            } finally {
-                dispatch(setLoaderDisplayed());
-            }
+            WorkTaskService.remove([targetTask.id]).then(resolve => {
+                if (!resolve.error) {
+                    let newTasks = workTasks.filter(task => task.id !== targetTask.id);
+                    setWorkTasks(newTasks);
+                    toast.success('Task deleted!');
+                } else {
+                    toast.error(`Error deleting task: ${resolve.error}`);
+                }
+            }).catch(err => {
+                toast.error(`Error deleting task: ${err}`);
+            }).finally(() => {
+                dispatch(setLoaderNone());
+            });
         }
-    }, []);
+    };
 
     const handleTaskEdit = useCallback((task: IWorkTask) => {
         setTargetTask(task);
