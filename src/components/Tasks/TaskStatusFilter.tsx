@@ -4,8 +4,10 @@ import Button from "@mui/material/Button";
 import Popper from '@mui/material/Popper';
 import Fade from '@mui/material/Fade';
 import Checkbox from '@mui/material/Checkbox';
+import { pink } from '@mui/material/colors';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { WorkTaskStatus } from '../../interfaces/IWorkTask';
+import { getTitleColor } from './TaskCommon';
 
 interface TaskStatusFilterProps {
     initialSelectedStatus: boolean[];
@@ -25,6 +27,7 @@ const TaskStatusFilter = (props: TaskStatusFilterProps) => {
     };
 
     console.log(`TaskStatusFilter: initialSelectedStatus: ${initialSelectedStatus}`);
+    console.log(`TaskStatusFilter: WorkTaskStatus:${Object.keys(WorkTaskStatus)}`);
 
     const updateCheckedValue = (status: WorkTaskStatus, statusChecked: boolean) => {
         let newChecked = [...checked];
@@ -39,26 +42,21 @@ const TaskStatusFilter = (props: TaskStatusFilterProps) => {
 
     const children = (
         <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
-            <FormControlLabel
-                label={WorkTaskStatus[WorkTaskStatus.Canceled]}
-                control={<Checkbox checked={checked[WorkTaskStatus.Canceled]}
-                    onChange={(event) => { updateCheckedValue(WorkTaskStatus.Canceled, event.target.checked); }} />}
-            />
-            <FormControlLabel
-                label={WorkTaskStatus[WorkTaskStatus.Registered]}
-                control={<Checkbox checked={checked[WorkTaskStatus.Registered]}
-                    onChange={(event) => { updateCheckedValue(WorkTaskStatus.Registered, event.target.checked); }} />}
-            />
-            <FormControlLabel
-                label={WorkTaskStatus[WorkTaskStatus.Started]}
-                control={<Checkbox checked={checked[WorkTaskStatus.Started]}
-                    onChange={(event) => { updateCheckedValue(WorkTaskStatus.Started, event.target.checked); }} />}
-            />
-            <FormControlLabel
-                label={WorkTaskStatus[WorkTaskStatus.Completed]}
-                control={<Checkbox checked={checked[WorkTaskStatus.Completed]}
-                    onChange={(event) => { updateCheckedValue(WorkTaskStatus.Completed, event.target.checked); }} />}
-            />
+            {checked.map((statusChecked, status) => {
+                return (
+                    <FormControlLabel
+                        label={WorkTaskStatus[status]}
+                        control={<Checkbox checked={statusChecked}
+                            sx={{
+                                color: getTitleColor(status),
+                                '&.Mui-checked': {
+                                    color: getTitleColor(status),
+                                },
+                            }}
+                            onChange={(event) => { updateCheckedValue(status, event.target.checked); }} />}
+                    />
+                )
+            })}
         </Box>
     );
 
@@ -74,7 +72,7 @@ const TaskStatusFilter = (props: TaskStatusFilterProps) => {
                                 control={
                                     <Checkbox
                                         checked={checked.reduce((acc, cur) => acc && cur, true)}
-                                        indeterminate={checked.some((cur) => !cur)}
+                                        indeterminate={checked.some((cur) => !cur) && !checked.every((cur) => !cur)}
                                         onChange={handleCheckAllChange}
                                     />
                                 }
