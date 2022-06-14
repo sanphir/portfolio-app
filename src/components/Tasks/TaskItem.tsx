@@ -20,6 +20,8 @@ interface TaskItemProps {
 const TaskItem = (props: TaskItemProps) => {
   const { task, onDelete, onEdit } = props;
 
+  //  console.log(`TaskItem render: ${task.title}`);
+
   const language = window.navigator.language;
 
   const titleColor: any = getTitleColor(task.status);
@@ -52,9 +54,11 @@ const TaskItem = (props: TaskItemProps) => {
       </div>
       <div className='taskItemInfo'>
         <div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+            <p><b>Started:</b> {task.startedAt ? new Date(task.startedAt).toLocaleDateString(language) : "-"}</p>
+            <p><b>Completed:</b> {task.completedAt ? new Date(task.completedAt).toLocaleDateString(language) : "-"}</p>
+          </div>
           <p><b>Due date:</b> {task.dueDate ? new Date(task.dueDate).toLocaleDateString(language) : "-"}</p>
-          <p><b>Started:</b> {task.startedAt ? new Date(task.startedAt).toLocaleDateString(language) : "-"}</p>
-          <p><b>Completed:</b> {task.completedAt ? new Date(task.completedAt).toLocaleDateString(language) : "-"}</p>
           <p><b>Created:</b> {task.createdDate ? new Date(task.createdDate).toLocaleString(language) : "-"}</p>
           <p><b>Last modified:</b> {task.lastModifiedDate ? new Date(task.lastModifiedDate).toLocaleString(language) : "-"}</p>
           <p><b>Assigned to:</b> {task.assignedToName}</p>
@@ -72,4 +76,4 @@ const TaskItem = (props: TaskItemProps) => {
   )
 }
 
-export default TaskItem
+export default React.memo(TaskItem);

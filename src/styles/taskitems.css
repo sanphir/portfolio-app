@@ -41,7 +41,7 @@
 .taskItemContent {
   color: black;
   border-bottom: 1px solid gray;
-  height: 83px;
+  height: 100px;
   overflow: auto;
 }
 .taskItemContentTextContainer {
