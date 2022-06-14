@@ -1,8 +1,8 @@
 export enum WorkTaskStatus {
-    Canceled = 0,
-    Registered = 1,
-    Started = 2,
-    Completed = 3
+    Canceled,
+    Registered,
+    Started,
+    Completed
 }
 export interface INewWorkTask {
     title: string;

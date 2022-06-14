@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from 'react'
 import { INewWorkTask, IUpdateWorkTask, IWorkTask, WorkTaskStatus } from '../../interfaces/IWorkTask';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import Box from '@mui/material/Box';
@@ -267,10 +268,10 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
                                 </Select>
                             </FormControl>
                         </div>
-                        <div>
+                        <DialogActions>
                             <Button onClick={(e) => onCancel()}><b>Cancel</b></Button>
                             <Button type='submit' disabled={!isValid} autoFocus>Save</Button>
-                        </div>
+                        </DialogActions>
                     </Box>
                 </LocalizationProvider>
             </DialogContent>

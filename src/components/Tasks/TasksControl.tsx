@@ -1,5 +1,5 @@
 import "../../styles/common.css";
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useAppDispatch } from '../../redux/hooks';
 import WorkTaskService from '../../services/WorkTaskService';
 import { INewWorkTask, IUpdateWorkTask, IWorkTask, WorkTaskStatus } from '../../interfaces/IWorkTask';
@@ -15,6 +15,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { DialogResult } from "../../interfaces/Common";
 import { TaskItemDialog } from "./TaskItemDialog";
 import { DeleteConfirmeDialog } from "../CommonDialogs/DeleteConfirmeDialog";
+import TaskStatusFilter from "./TaskStatusFilter";
 
 const TasksControl = () => {
     const dispatch = useAppDispatch();
@@ -40,6 +41,16 @@ const TasksControl = () => {
         lastModifiedDate: new Date(),
     } as IWorkTask;
     const [targetTask, setTargetTask] = useState<IWorkTask>(newTask);
+
+    const getInitialSelectedStatusFilter = () => {
+        let result: boolean[] = [];
+        result[WorkTaskStatus.Canceled] = false;
+        result[WorkTaskStatus.Registered] = true;
+        result[WorkTaskStatus.Started] = true;
+        result[WorkTaskStatus.Completed] = true;
+        return result;
+    }
+    const [selectedStatusFilter, setSelectedStatusFilter] = useState(getInitialSelectedStatusFilter());
 
     useEffect(() => {
         let empployeeId = localStorage.getItem("empployeeId");
@@ -140,11 +151,17 @@ const TasksControl = () => {
             <TaskItemDialog open={openTaskDialog} task={targetTask} onSave={handleTaskDialogSave} onCancel={handleTaskDialogCancel} />
             <DeleteConfirmeDialog open={openDeleteTaskDialog} onClose={handleDeleteTaskDialogClose} message={`Are you sure you want to delete "${targetTask?.title ?? ""}" task?`} />
             <div className="taskControlToolbar">
-                <Tooltip title="Add new task">
-                    <IconButton onClick={handleNewTask}>
-                        <AddIcon />
-                    </IconButton>
-                </Tooltip>
+                <div>
+
+                </div>
+                <div style={{ display: "flex", justifyContent: "end" }}>
+                    <TaskStatusFilter initialSelectedStatus={selectedStatusFilter} />
+                    <Tooltip title="Add new task">
+                        <IconButton onClick={handleNewTask}>
+                            <AddIcon />
+                        </IconButton>
+                    </Tooltip>
+                </div>
             </div>
             <div style={{ display: 'block' }}>
                 {
