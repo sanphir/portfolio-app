@@ -1,6 +1,6 @@
 import axios from "axios";
-import { ICommonResponse } from "../interfaces/ICommonResponse";
-import { INewWorkTask, IUpdateWorkTask, IWorkTask } from "../interfaces/IWorkTask";
+import { ICommonResponse } from "../Common/ICommonResponse";
+import { INewWorkTask, IUpdateWorkTask, IWorkTask } from "../Common/IWorkTask";
 import { API_URL } from "../config";
 import AuthService from "./AuthService";
 import { getErrorResposne } from "../helpers/axiosHelper";

@@ -6,7 +6,7 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { visuallyHidden } from '@mui/utils';
-import { IEmployee } from '../../interfaces/IEmployee';
+import { IEmployee } from '../../Common/IEmployee';
 import { Order } from './EmployeesTableCommon';
 
 interface HeadCell {

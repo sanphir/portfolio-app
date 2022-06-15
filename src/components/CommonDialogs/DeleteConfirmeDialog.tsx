@@ -4,8 +4,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { DialogResult } from "../../interfaces/Common";
-import { DialogCallBack } from '../../interfaces/CallBackDefinitions';
+import { DialogResult } from "../../Common/Common";
+import { DialogCallBack } from '../../Common/CallBackDefinitions';
 import Button from '@mui/material/Button';
 
 interface DeleteConfirmeDialogProps {

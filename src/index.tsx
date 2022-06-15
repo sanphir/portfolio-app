@@ -14,7 +14,7 @@ import NotFound from "./pages/NotFound";
 import { RequireAuth, UserRole } from './hoc/RequireAuth';
 import { store } from './redux/store';
 import DeniedPage from './pages/DeniedPage';
-import TasksControl from './components/Tasks/TasksControl';
+import TasksPanel from './components/Tasks/TasksPanel';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -42,7 +42,7 @@ root.render(
               path="tasks"
               element={
                 <RequireAuth role={UserRole.Any}>
-                  <TasksControl />
+                  <TasksPanel />
                 </RequireAuth>
               }
             />

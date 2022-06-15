@@ -4,9 +4,8 @@ import Button from "@mui/material/Button";
 import Popper from '@mui/material/Popper';
 import Fade from '@mui/material/Fade';
 import Checkbox from '@mui/material/Checkbox';
-import { pink } from '@mui/material/colors';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { WorkTaskStatus } from '../../interfaces/IWorkTask';
+import { WorkTaskStatus } from '../../Common/IWorkTask';
 import { getTitleColor } from './TaskCommon';
 
 interface TaskStatusFilterProps {

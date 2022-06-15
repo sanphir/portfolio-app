@@ -13,7 +13,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import { IEmployee, INewEmployee, IUpdateEmployee, Role } from '../../interfaces/IEmployee';
+import { IEmployee, INewEmployee, IUpdateEmployee, Role } from '../../Common/IEmployee';
 
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';

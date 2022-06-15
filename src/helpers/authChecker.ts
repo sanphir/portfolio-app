@@ -1,5 +1,5 @@
-import { Nullable } from "../interfaces/Common";
-import { ITokenInfo } from "../interfaces/IToken";
+import { Nullable } from "../Common/Common";
+import { ITokenInfo } from "../Common/IToken";
 
 export const isAuthenticated = (tokenInfo: Nullable<ITokenInfo>): boolean => {
     if (!tokenInfo) {

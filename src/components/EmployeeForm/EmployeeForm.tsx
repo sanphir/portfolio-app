@@ -3,7 +3,7 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch } from '../../redux/hooks';
 import { addEmployee, updateEmployee } from '../../redux/employeesSlice';
 import { toast } from 'react-toastify';
-import { IEmployee, IUpdateEmployee, INewEmployee, Role } from '../../interfaces/IEmployee';
+import { IEmployee, IUpdateEmployee, INewEmployee, Role } from '../../Common/IEmployee';
 import EmployeeService from '../../services/EmployeeService';
 import { EmployeeFormControl } from './EmployeeFormControl';
 import { setLoaderDisplayed, setLoaderNone } from '../../redux/loaderSlice';

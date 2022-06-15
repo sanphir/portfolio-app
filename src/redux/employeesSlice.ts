@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from './store';
 import EmployeeService from '../services/EmployeeService';
-import { IEmployee } from '../interfaces/IEmployee';
-import { ISelctionSourceItem } from '../interfaces/Common';
+import { IEmployee } from '../Common/IEmployee';
+import { ISelctionSourceItem } from '../Common/Common';
 
 export enum SliceStatus {
     IDLE = 'idle',

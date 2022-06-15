@@ -1,4 +1,4 @@
-import { WorkTaskStatus } from "../../interfaces/IWorkTask";
+import { WorkTaskStatus } from "../../Common/IWorkTask";
 
 export const getTitleColor = (status: WorkTaskStatus) => {
     switch (status) {

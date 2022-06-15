@@ -1,7 +1,7 @@
 import axios from "axios";
-import { Nullable } from "../interfaces/Common";
-import { ICommonResponse } from "../interfaces/ICommonResponse";
-import { ITokenResponse, ITokenInfo } from "../interfaces/IToken";
+import { Nullable } from "../Common/Common";
+import { ICommonResponse } from "../Common/ICommonResponse";
+import { ITokenResponse, ITokenInfo } from "../Common/IToken";
 import { getErrorResposne } from "../helpers/axiosHelper";
 import { API_URL } from "../config";
 import jwtDecode from "jwt-decode";

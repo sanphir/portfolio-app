@@ -24,7 +24,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { EmployeesTableToolbar } from './EmployeesTableToolbar';
 import { EmployeesTableHead } from './EmployeesTableHead';
 import { Order, getComparator, stableSort } from './EmployeesTableCommon';
-import { IEmployee, Role } from '../../interfaces/IEmployee';
+import { IEmployee, Role } from '../../Common/IEmployee';
 import EmployeeService from '../../services/EmployeeService';
 
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
@@ -36,7 +36,7 @@ import {
     filterEmployeesByNameOrEmail
 } from '../../redux/employeesSlice';
 import { setLoaderDisplayed, setLoaderNone } from '../../redux/loaderSlice';
-import { DialogResult } from "../../interfaces/Common";
+import { DialogResult } from "../../Common/Common";
 import { DeleteConfirmeDialog } from "../CommonDialogs/DeleteConfirmeDialog";
 
 

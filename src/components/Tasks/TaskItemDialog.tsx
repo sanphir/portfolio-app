@@ -1,6 +1,6 @@
 import "../../styles/common.css";
 import { useEffect, useState, useRef } from 'react'
-import { INewWorkTask, IUpdateWorkTask, IWorkTask, WorkTaskStatus } from '../../interfaces/IWorkTask';
+import { INewWorkTask, IUpdateWorkTask, IWorkTask, WorkTaskStatus } from '../../Common/IWorkTask';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
@@ -20,7 +20,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
-import { SimpleCallBack } from '../../interfaces/CallBackDefinitions';
+import { SimpleCallBack } from '../../Common/CallBackDefinitions';
 import { addHours } from "date-fns";
 
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
@@ -30,7 +30,7 @@ import {
 } from '../../redux/employeesSlice';
 import { setLoaderDisplayed, setLoaderNone } from '../../redux/loaderSlice';
 import { getTitleColor as getTaskStatusColor } from "./TaskCommon";
-import { ISelctionSourceItem, Nullable } from "../../interfaces/Common";
+import { ISelctionSourceItem, Nullable } from "../../Common/Common";
 
 interface IFormInputs {
     titleField: string,

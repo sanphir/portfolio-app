@@ -1,5 +1,5 @@
 import React from 'react'
-import { IWorkTask, WorkTaskStatus } from '../../interfaces/IWorkTask';
+import { IWorkTask, WorkTaskStatus } from '../../Common/IWorkTask';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';

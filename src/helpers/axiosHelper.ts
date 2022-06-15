@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { ICommonResponse } from "../interfaces/ICommonResponse";
+import { ICommonResponse } from "../Common/ICommonResponse";
 
 export const getErrorResposne = (error: any): ICommonResponse<any> => {
     console.log(`Response error: ${JSON.stringify(error)}`);

@@ -2,7 +2,7 @@ import "../../styles/common.css";
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useAppDispatch } from '../../redux/hooks';
 import WorkTaskService from '../../services/WorkTaskService';
-import { INewWorkTask, IUpdateWorkTask, IWorkTask, WorkTaskStatus } from '../../interfaces/IWorkTask';
+import { INewWorkTask, IUpdateWorkTask, IWorkTask, WorkTaskStatus } from '../../Common/IWorkTask';
 import { toast } from 'react-toastify';
 import { setLoaderDisplayed, setLoaderNone } from '../../redux/loaderSlice';
 import AuthService from "../../services/AuthService";
@@ -12,12 +12,21 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 
-import { DialogResult } from "../../interfaces/Common";
+import { DialogResult } from "../../Common/Common";
 import { TaskItemDialog } from "./TaskItemDialog";
 import { DeleteConfirmeDialog } from "../CommonDialogs/DeleteConfirmeDialog";
 import TaskStatusFilter from "./TaskStatusFilter";
 
-const TasksControl = () => {
+const getInitialSelectedStatusFilter = () => {
+    let result: boolean[] = [];
+    result[WorkTaskStatus.Canceled] = false;
+    result[WorkTaskStatus.Registered] = true;
+    result[WorkTaskStatus.Started] = true;
+    result[WorkTaskStatus.Completed] = true;
+    return result;
+}
+
+const TasksPanel = () => {
     const dispatch = useAppDispatch();
     const [workTasks, setWorkTasks] = useState<IWorkTask[]>([]);
 
@@ -42,15 +51,13 @@ const TasksControl = () => {
     } as IWorkTask;
     const [targetTask, setTargetTask] = useState<IWorkTask>(newTask);
 
-    const getInitialSelectedStatusFilter = () => {
-        let result: boolean[] = [];
-        result[WorkTaskStatus.Canceled] = false;
-        result[WorkTaskStatus.Registered] = true;
-        result[WorkTaskStatus.Started] = true;
-        result[WorkTaskStatus.Completed] = true;
-        return result;
-    }
     const [selectedStatusFilter, setSelectedStatusFilter] = useState(getInitialSelectedStatusFilter());
+
+    const filteredWorkTasks = useMemo(() => {
+        return workTasks.filter((task) => {
+            return selectedStatusFilter[task.status];
+        })
+    }, [workTasks, selectedStatusFilter]);
 
     useEffect(() => {
         let empployeeId = localStorage.getItem("empployeeId");
@@ -165,7 +172,7 @@ const TasksControl = () => {
             </div>
             <div style={{ display: 'block' }}>
                 {
-                    workTasks.map((task, index) => {
+                    filteredWorkTasks.map((task, index) => {
                         return (
                             <TaskItem task={task} key={index} onEdit={handleTaskEdit} onDelete={handleTaskDelet} />
                         );
@@ -176,4 +183,4 @@ const TasksControl = () => {
     )
 }
 
-export default TasksControl
+export default TasksPanel

@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Nullable } from '../interfaces/Common';
-import { ITokenInfo, ITokenResponse } from '../interfaces/IToken';
+import { Nullable } from '../Common/Common';
+import { ITokenInfo, ITokenResponse } from '../Common/IToken';
 import { RootState } from './store';
 import jwtDecode from "jwt-decode";
 
