@@ -166,7 +166,9 @@ const TasksPanel = () => {
 
                 </div>
                 <div style={{ display: "flex", justifyContent: "end" }}>
-                    <TaskStatusFilter initialSelectedStatuses={selectedStatusesFilter} selectedStatusesChanged={selectedStatusesChaged} />
+                    <div style={{ position: "relative", top: "3px" }}>
+                        <TaskStatusFilter initialSelectedStatuses={selectedStatusesFilter} selectedStatusesChanged={selectedStatusesChaged} />
+                    </div>
                     <Tooltip title="Add new task">
                         <IconButton onClick={handleNewTask}>
                             <AddIcon />

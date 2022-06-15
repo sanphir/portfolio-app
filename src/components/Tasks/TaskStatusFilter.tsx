@@ -30,9 +30,6 @@ const TaskStatusFilter = (props: TaskStatusFilterProps) => {
         setOpen((previousOpen) => !previousOpen);
     };
 
-    console.log(`TaskStatusFilter: initialSelectedStatus: ${initialSelectedStatuses}`);
-    console.log(`TaskStatusFilter: WorkTaskStatus:${Object.keys(WorkTaskStatus)}`);
-
     const updateCheckedValue = (status: WorkTaskStatus, statusChecked: boolean) => {
         let newChecked = [...checked];
         newChecked[status] = statusChecked;
