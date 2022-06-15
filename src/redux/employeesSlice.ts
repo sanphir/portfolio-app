@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from './store';
 import EmployeeService from '../services/EmployeeService';
 import { IEmployee } from '../Common/IEmployee';
-import { ISelctionSourceItem } from '../Common/Common';
 
 export enum SliceStatus {
     IDLE = 'idle',
@@ -12,15 +11,11 @@ export enum SliceStatus {
 
 export interface EmployeesState {
     value: IEmployee[];
-    filtredValues: IEmployee[];
-    selectionSource: ISelctionSourceItem[],
     status: SliceStatus;
 }
 
 const initialState: EmployeesState = {
     value: [],
-    filtredValues: [],
-    selectionSource: [],
     status: SliceStatus.IDLE,
 };
 
@@ -46,35 +41,19 @@ export const employeesSlice = createSlice({
         // Use the PayloadAction type to declare the contents of `action.payload`
         setEmployees: (state, action: PayloadAction<IEmployee[]>) => {
             state.value = action.payload;
-            state.filtredValues = [...state.value];
-            state.selectionSource = [...state.value.map(r => ({ label: r.name, id: r.id } as ISelctionSourceItem))]
         },
 
         addEmployee: (state, action: PayloadAction<IEmployee>) => {
             state.value = [...state.value, action.payload];
-            state.filtredValues = [...state.value];
-            state.selectionSource = [...state.value.map(r => ({ label: r.name, id: r.id } as ISelctionSourceItem))]
         },
 
         updateEmployee: (state, action: PayloadAction<IEmployee>) => {
-            var empIdx = state.value.findIndex(e => e.id == action.payload.id);
+            var empIdx = state.value.findIndex(e => e.id === action.payload.id);
             state.value[empIdx] = action.payload;
-            state.filtredValues = [...state.value];
-            state.selectionSource = [...state.value.map(r => ({ label: r.name, id: r.id } as ISelctionSourceItem))]
         },
 
         removeEmployee: (state, action: PayloadAction<string[]>) => {
             state.value = state.value.filter(e => !action.payload.includes(e.id));
-            state.filtredValues = [...state.value];
-            state.selectionSource = [...state.value.map(r => ({ label: r.name, id: r.id } as ISelctionSourceItem))]
-        },
-
-        filterEmployeesByNameOrEmail: (state, action: PayloadAction<string>) => {
-            if (action?.payload ?? null) {
-                state.filtredValues = [...state.value.filter(e => e.email.indexOf(action.payload) >= 0 || e.name.indexOf(action.payload) >= 0)];
-            } else {
-                state.filtredValues = [...state.value];
-            }
         },
     },
     // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -87,18 +66,15 @@ export const employeesSlice = createSlice({
             .addCase(getEmployeesAsync.fulfilled, (state, action) => {
                 state.status = SliceStatus.IDLE;
                 state.value = action.payload ?? [];
-                state.filtredValues = action.payload ?? [];
-                state.selectionSource = [...(action.payload ?? []).map(r => ({ label: r.name, id: r.id } as ISelctionSourceItem))];
             });
     },
 });
 
-export const { setEmployees, addEmployee, removeEmployee, updateEmployee, filterEmployeesByNameOrEmail } = employeesSlice.actions;
+export const { setEmployees, addEmployee, removeEmployee, updateEmployee } = employeesSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.employees.value)`
-export const selectEmployees = (state: RootState) => state.employees.filtredValues;
-export const getEmployeesSelectionSource = (state: RootState) => state.employees.selectionSource;
+export const getEmployees = (state: RootState) => state.employees.value;
 
 export default employeesSlice.reducer;

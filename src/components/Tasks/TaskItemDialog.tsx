@@ -1,5 +1,5 @@
 import "../../styles/common.css";
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useMemo } from 'react'
 import { INewWorkTask, IUpdateWorkTask, IWorkTask, WorkTaskStatus } from '../../Common/IWorkTask';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -26,7 +26,7 @@ import { addHours } from "date-fns";
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import {
     getEmployeesAsync,
-    getEmployeesSelectionSource,
+    getEmployees,
 } from '../../redux/employeesSlice';
 import { setLoaderDisplayed, setLoaderNone } from '../../redux/loaderSlice';
 import { getTitleColor as getTaskStatusColor } from "./TaskCommon";
@@ -65,7 +65,10 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
     const minDueDate = isNew ? new Date() : new Date(task?.dueDate);
 
     const dispatch = useAppDispatch();
-    const employees = useAppSelector(getEmployeesSelectionSource);
+    const employees = useAppSelector(getEmployees);
+    const employeesSelectionSource = useMemo(() => {
+        return employees.map(e => ({ id: e.id, label: e.name } as ISelctionSourceItem));
+    }, [employees]);
 
     const autocompletePopper = function (props: any) {
         return (<Popper {...props}
@@ -215,7 +218,7 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
                             id="owner-combo-box-demo"
                             disabled
                             PopperComponent={autocompletePopper}
-                            options={employees}
+                            options={employeesSelectionSource}
                             defaultValue={(isEmployeeSourceLoaded && task.owner) ? { label: task.ownerName, id: task.owner } : null}
                             onChange={(event: React.SyntheticEvent, newValue: any) => {
                                 if (newValue) {
@@ -233,7 +236,7 @@ export const TaskItemDialog = (props: TaskItemDialogProps) => {
                             disablePortal
                             id="assignedTo-combo-box-demo"
                             PopperComponent={autocompletePopper}
-                            options={employees}
+                            options={employeesSelectionSource}
                             onChange={(event: React.SyntheticEvent, newValue: any) => {
                                 if (newValue) {
                                     if (newValue.id !== assignedTo?.id ?? "") {

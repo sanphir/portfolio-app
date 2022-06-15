@@ -30,10 +30,8 @@ import EmployeeService from '../../services/EmployeeService';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import {
     getEmployeesAsync,
-    setEmployees,
-    selectEmployees,
+    getEmployees,
     removeEmployee,
-    filterEmployeesByNameOrEmail
 } from '../../redux/employeesSlice';
 import { setLoaderDisplayed, setLoaderNone } from '../../redux/loaderSlice';
 import { DialogResult } from "../../Common/Common";
@@ -41,7 +39,7 @@ import { DeleteConfirmeDialog } from "../CommonDialogs/DeleteConfirmeDialog";
 
 
 export default function EmployeesTable() {
-    const rows = useAppSelector(selectEmployees);
+    const rows = useAppSelector(getEmployees);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [isPanding, startTransition] = useTransition();
@@ -52,8 +50,17 @@ export default function EmployeesTable() {
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [searcheValue, setSearcheValue] = React.useState('');
 
     const [openDeleteEmployeeAlert, setOpenDeleteEmployeeAlert] = React.useState(false);
+
+    const filteredRows = React.useMemo(() => {
+        if (searcheValue && searcheValue.length > 0) {
+            return [...rows.filter(e => e.email.indexOf(searcheValue) >= 0 || e.name.indexOf(searcheValue) >= 0)];
+        } else {
+            return [...rows];
+        }
+    }, [rows, searcheValue]);
 
     const handleDeleteEmployee = (event: unknown) => {
         let currentId = localStorage.getItem("empployeeId");
@@ -94,9 +101,9 @@ export default function EmployeesTable() {
     }
 
     const handleSearcheChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // dispatch(filterEmployeesByNameOrEmail(event?.target?.value ?? null));
+        // dispatch(filterEmployeesByNameOrEmail(event?.target?.value ?? null));        
         startTransition(() => {
-            dispatch(filterEmployeesByNameOrEmail(event?.target?.value ?? null));
+            setSearcheValue(event?.target?.value ?? '');
         });
     }
 
@@ -111,8 +118,7 @@ export default function EmployeesTable() {
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
-            const newSelecteds = rows.map((n) => n.name);
-            setSelected(newSelecteds);
+            setSelected([...filteredRows.map((n) => n.id)]);
             return;
         }
         setSelected([]);
@@ -159,7 +165,7 @@ export default function EmployeesTable() {
 
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredRows.length) : 0;
 
     useEffect(() => {
         //console.log("EmployeesTable useEffect");
@@ -193,12 +199,12 @@ export default function EmployeesTable() {
                             orderBy={orderBy}
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
-                            rowCount={rows.length}
+                            rowCount={filteredRows.length}
                         />
                         <TableBody>
                             {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                 rows.slice().sort(getComparator(order, orderBy)) */}
-                            {stableSort(rows, getComparator(order, orderBy))
+                            {stableSort(filteredRows, getComparator(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
                                     const isItemSelected = isSelected(row.id.toString());
@@ -256,7 +262,7 @@ export default function EmployeesTable() {
                 <TablePagination
                     rowsPerPageOptions={[10, 15, 20]}
                     component="div"
-                    count={rows.length}
+                    count={filteredRows.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
