@@ -51,13 +51,17 @@ const TasksPanel = () => {
     } as IWorkTask;
     const [targetTask, setTargetTask] = useState<IWorkTask>(newTask);
 
-    const [selectedStatusFilter, setSelectedStatusFilter] = useState(getInitialSelectedStatusFilter());
+    const [selectedStatusesFilter, setSelectedStatusesFilter] = useState(getInitialSelectedStatusFilter());
 
     const filteredWorkTasks = useMemo(() => {
         return workTasks.filter((task) => {
-            return selectedStatusFilter[task.status];
+            return selectedStatusesFilter[task.status];
         })
-    }, [workTasks, selectedStatusFilter]);
+    }, [workTasks, selectedStatusesFilter]);
+
+    const selectedStatusesChaged = (selectedStatuses: boolean[]) => {
+        setSelectedStatusesFilter(selectedStatuses);
+    };
 
     useEffect(() => {
         let empployeeId = localStorage.getItem("empployeeId");
@@ -162,7 +166,7 @@ const TasksPanel = () => {
 
                 </div>
                 <div style={{ display: "flex", justifyContent: "end" }}>
-                    <TaskStatusFilter initialSelectedStatus={selectedStatusFilter} />
+                    <TaskStatusFilter initialSelectedStatuses={selectedStatusesFilter} selectedStatusesChanged={selectedStatusesChaged} />
                     <Tooltip title="Add new task">
                         <IconButton onClick={handleNewTask}>
                             <AddIcon />

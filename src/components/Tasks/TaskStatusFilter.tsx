@@ -8,12 +8,17 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { WorkTaskStatus } from '../../Common/IWorkTask';
 import { getTitleColor } from './TaskCommon';
 
+export interface SelectedStatusesChangedCallBack {
+    (selectedStatuses: boolean[]): void
+}
+
 interface TaskStatusFilterProps {
-    initialSelectedStatus: boolean[];
+    initialSelectedStatuses: boolean[];
+    selectedStatusesChanged: SelectedStatusesChangedCallBack;
 }
 
 const TaskStatusFilter = (props: TaskStatusFilterProps) => {
-    const { initialSelectedStatus } = props;
+    const { initialSelectedStatuses, selectedStatusesChanged } = props;
     const [open, setOpen] = React.useState(false);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -25,18 +30,21 @@ const TaskStatusFilter = (props: TaskStatusFilterProps) => {
         setOpen((previousOpen) => !previousOpen);
     };
 
-    console.log(`TaskStatusFilter: initialSelectedStatus: ${initialSelectedStatus}`);
+    console.log(`TaskStatusFilter: initialSelectedStatus: ${initialSelectedStatuses}`);
     console.log(`TaskStatusFilter: WorkTaskStatus:${Object.keys(WorkTaskStatus)}`);
 
     const updateCheckedValue = (status: WorkTaskStatus, statusChecked: boolean) => {
         let newChecked = [...checked];
         newChecked[status] = statusChecked;
         setChecked(newChecked);
+        selectedStatusesChanged(newChecked);
     };
-    const [checked, setChecked] = React.useState(initialSelectedStatus);
+    const [checked, setChecked] = React.useState(initialSelectedStatuses);
 
     const handleCheckAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked(checked.map(() => event.target.checked));
+        let newChecked = checked.map(() => event.target.checked)
+        setChecked(newChecked);
+        selectedStatusesChanged(newChecked);
     };
 
     const children = (
